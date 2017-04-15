@@ -1,7 +1,7 @@
 #!groovy​
 
 def buildNumber = env.BUILD_NUMBER
-def gitUrl = 'ssh://git@stash.tesseractmobile.net:7999/arduino/efim.git'
+def gitUrl = 'ssh://git@stash.tesseractmobile.net:7999/poc/pocketbot.git'
 def branch = 'master'
 def credentialsId = '9a65d10b-144b-4b63-9f93-91f9ef1ce543'
 
