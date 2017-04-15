@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- values-large -->
+	<dimen name="width_eye">250dp</dimen>
+	<dimen name="height_eye">250dp</dimen>
+	<dimen name="width_mouth">640dp</dimen>
+	<dimen name="height_mouth">200dp</dimen>
+	<dimen name="margin_top_mouth">150dp</dimen>
+	<dimen name="text_size_mouth">18dp</dimen>
+	<dimen name="width_camera_preview">480dp</dimen>
+	<dimen name="height_camera_preview">640dp</dimen>
+	<dimen name="width_eye_cartoon">400dp</dimen>
+	<dimen name="height_eye_cartoon">400dp</dimen>
+	<dimen name="width_mouth_cartoon">200dp</dimen>
+	<dimen name="height_mouth_cartoon">60dp</dimen>
+</resources>

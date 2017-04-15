@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_faces"
+            android:icon="@drawable/ic_face_black"
+            android:title="Faces" />
+        <item
+            android:id="@+id/nav_emotions"
+            android:icon="@drawable/ic_bubble_chart_black_48dp"
+            android:title="Emotions" />
+        <item
+            android:id="@+id/nav_settings"
+            android:icon="@drawable/ic_settings_applications_black_48dp"
+            android:title="Settings" />
+
+    </group>
+
+    <item android:title="Communicate">
+        <menu>
+            <item
+                android:id="@+id/nav_share"
+                android:icon="@drawable/ic_person_add_black_48dp"
+                android:title="Send Control Permission" />
+            <item
+                android:id="@+id/nav_feedback"
+                android:icon="@drawable/ic_report_black_48dp"
+                android:title="Give Feedback" />
+        </menu>
+    </item>
+
+</menu>

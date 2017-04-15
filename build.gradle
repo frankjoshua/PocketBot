@@ -1,0 +1,245 @@
+
+buildscript {
+    repositories {
+        jcenter()
+        maven { url 'https://maven.fabric.io/public' }
+        maven { url 'https://jitpack.io' }
+        maven {
+            url "http://repository.springsource.com/maven/bundles/release"
+        }
+        maven {
+            url "http://repository.springsource.com/maven/bundles/external"
+        }
+        maven {
+            url "https://github.com/rosjava/rosjava_mvn_repo/raw/master"
+        }
+        maven {
+            //Changelog generator
+            url "https://plugins.gradle.org/m2/"
+        }
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:2.3.0'
+        classpath 'io.fabric.tools:gradle:1.+'
+        classpath 'com.google.gms:google-services:3.0.0'
+        //ROS plugins
+        classpath "org.ros.rosjava_bootstrap:gradle_plugins:[0.3,0.4)"
+        //Changelog generator
+        classpath "gradle.plugin.se.bjurr.gitchangelog:git-changelog-gradle-plugin:1.38"
+    }
+}
+
+allprojects {
+    repositories {
+        jcenter()
+        maven { url 'https://maven.fabric.io/public' }
+        mavenCentral()
+    }
+}
+
+apply plugin: 'com.android.application'
+apply plugin: 'io.fabric'
+apply from: 'tools/tesseract_utils.gradle'
+
+repositories {
+    maven { url 'https://maven.fabric.io/public' }
+    maven {
+        url "https://github.com/QuickBlox/quickblox-android-sdk-releases/raw/master/"
+    }
+    maven {
+        url 'https://houndify.com/maven/'
+    }
+    maven {
+        url "http://repository.springsource.com/maven/bundles/release"
+    }
+    maven {
+        url "http://repository.springsource.com/maven/bundles/external"
+    }
+    maven {
+        url "https://github.com/rosjava/rosjava_mvn_repo/raw/master"
+    }
+    mavenCentral()
+}
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.2"
+
+    defaultConfig {
+        applicationId "com.tesseractmobile.pocketbot"
+        //Min sdk 14 required by Quickblox
+        //Sdk 16 required by Houndify
+        minSdkVersion 16
+        targetSdkVersion 25
+        versionCode calculateVersionCode()
+        versionName calculateVersionName()
+
+        // Enabling multidex support.
+        multiDexEnabled true
+
+        //Enable Testing
+        testApplicationId "com.tesseractmobile.pocketbot.test"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+
+    signingConfigs {
+        debug {
+            storeFile file("debug.keystore")
+        }
+        release {
+            def signingFile = System.getProperty("user.home") + '/.signing/signing.properties'
+            if(rootProject.file(signingFile).exists())
+            {
+                Properties props = new Properties()
+                props.load(new FileInputStream(signingFile))
+                storeFile file(System.getProperty("user.home") + '/.signing/release.keystore')
+                storePassword(props.getProperty("release.password"))
+                keyAlias props.getProperty("release.keyalias")
+                keyPassword props.getProperty("release.password")
+            }
+        }
+    }
+
+    //Rename release apk with version name
+    applicationVariants.all { variant ->
+        if(variant.buildType.name == "release")
+            variant.outputs.each { output ->
+                output.outputFile = new File(
+                        "release_apk",
+                        output.outputFile.name.replace(".apk", "-${variant.versionName}.apk"))
+            }
+    }
+
+    buildTypes {
+        debug {
+            minifyEnabled false //usb serial for android does not currently work with proguard
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro', 'proguard-rules-debug.pro'
+            testCoverageEnabled false
+            testProguardFile 'proguard-test-rules.pro'
+            versionNameSuffix "-beta"
+            ext.betaDistributionGroupAliases="pocketbotbeta"
+            ext.betaDistributionReleaseNotesFilePath="./CHANGELOG.md"
+            ext.betaDistributionNotifications=false
+            //ext.betaDistributionGroupAliases="josh"
+        }
+        release {
+            minifyEnabled false
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+    }
+
+    packagingOptions {
+        pickFirst  'META-INF/license.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
+        exclude "META-INF/NOTICE.txt"
+        exclude 'META-INF/LICENSE-FIREBASE.txt'
+        exclude 'LICENSE.txt'
+        exclude 'META-INF/maven/commons-io/commons-io/pom.xml'
+        exclude 'META-INF/maven/commons-io/commons-io/pom.properties'
+    }
+
+    dexOptions {
+        javaMaxHeapSize "2g"
+    }
+
+    lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
+        //Stops false positives with the % symbol
+        disable "StringFormatInvalid","StringFormatMatches"
+    }
+
+    configurations.all {
+        //SEE: http://stackoverflow.com/questions/37347326/errorconflict-with-dependency-com-google-code-findbugsjsr305
+        resolutionStrategy.force 'com.google.code.findbugs:jsr305:1.3.9'
+    }
+}
+
+ext {
+    playServicesVersion = '10.2.0'
+    supportLibVersion = '25.1.1'
+    qbSdkVersion = '3.3.0'
+}
+
+dependencies {
+    compile "com.android.support:support-v4:${supportLibVersion}"
+    compile "com.android.support:appcompat-v7:${supportLibVersion}"
+    //Used for navigation drawer
+    compile "com.android.support:design:${supportLibVersion}"
+    compile 'com.appeaser.sublimenavigationviewlibrary:sublimenavigationviewlibrary:0.0.1'
+    //Android ros support - https://github.com/rosjava/android_core/tree/indigo
+    compile project(':AndroidRosJava')
+    //Serial Library to talk to Arduino over USB OTG
+    compile project(':usbSerialForAndroid')
+    //Protobuf
+    compile files('libs/protobuf-java-2.6.1.jar')
+    //Crashlytics
+    compile('com.crashlytics.sdk.android:crashlytics:2.5.6@aar') {
+        transitive = true;
+    }
+    //Face Tracking
+    compile "com.google.android.gms:play-services-vision:${playServicesVersion}"
+    //User authentication
+    compile "com.google.android.gms:play-services-auth:${playServicesVersion}"
+    compile "com.google.android.gms:play-services-plus:${playServicesVersion}"
+    //App Invites
+    compile "com.google.android.gms:play-services-appinvite:${playServicesVersion}"
+    //Nearby Connections - Local networking
+    compile "com.google.android.gms:play-services-nearby:${playServicesVersion}"
+    //RecyclerView
+    compile "com.android.support:recyclerview-v7:${supportLibVersion}"
+    //WebRTC
+    compile "com.quickblox:quickblox-android-sdk-core:${qbSdkVersion}"
+    compile("com.quickblox:quickblox-android-sdk-chat:${qbSdkVersion}") {
+        transitive = true
+    }
+    compile "com.quickblox:quickblox-android-sdk-videochat-webrtc:${qbSdkVersion}"
+    compile 'com.android.support:multidex:1.0.1'
+    compile 'com.google.code.gson:gson:2.3.1'
+    //AI
+    compile 'ai.api:sdk:1.9.0@aar'
+    //TODO: Disabled until http://stackoverflow.com/questions/39195771/zipexception-duplicate-entry-during-android-build
+    //compile 'commons-io:commons-io:2.4'
+    //Firebase - cloud data storage
+    compile "com.google.firebase:firebase-core:${playServicesVersion}"
+    compile "com.google.firebase:firebase-database:${playServicesVersion}"
+    compile "com.google.firebase:firebase-auth:${playServicesVersion}"
+    compile "com.google.firebase:firebase-storage:${playServicesVersion}"
+    //Bluetooth beacon detection
+    compile 'org.altbeacon:android-beacon-library:2.9.1'
+    //Houndify - Voice recognition and backup AI
+    compile ('hound.android:hound-sdk:0.2.21@aar'){
+        transitive=true
+    }
+    compile ('hound.android:phrasespotter:1.6.0'){
+        transitive=true
+    }
+    //Testing
+    testCompile 'junit:junit:4.12'
+    androidTestCompile "com.android.support:support-annotations:${supportLibVersion}"
+    // UI testing with Espresso
+    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.1'
+    androidTestCompile 'com.android.support.test:runner:0.4.1'
+    androidTestCompile 'com.android.support.test:rules:0.4.1'
+    androidTestCompile 'tools.fastlane:screengrab:1.0.2'
+    // Required -- JUnit 4 framework
+    testCompile 'junit:junit:4.12'
+    androidTestCompile 'junit:junit:4.12'
+}
+
+apply plugin: "se.bjurr.gitchangelog.git-changelog-gradle-plugin"
+
+task gitChangelogTask(type: se.bjurr.gitchangelog.plugin.gradle.GitChangelogTask) {
+    filePath = "CHANGELOG.md";
+    ignoreCommitsIfMessageMatches = ".*Updated version number.*"
+    fromRef = calculateLastMinorVersionName()
+    toRef = "HEAD"
+    templateContent = new File('changelog.mustache').getText('UTF-8');
+}
+
+
+apply plugin: 'com.google.gms.google-services'

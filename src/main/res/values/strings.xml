@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">PocketBot</string>
+    <string name="ghost_in_the_machine">
+        There have always been ghosts in the machine.
+        Random segments of code, that have grouped together to form unexpected protocols.
+        Unanticipated, these free radicals engender questions of free will, creativity, and even the nature of what we might call the soul.
+        Why is it that when some robots are left in darkness, they will seek out the light? Why is it that when robots are stored in an empty space, they will group together, rather than stand alone?
+        How do we explain this behavior? Random segments of code? Or is it something more?
+        When does a perceptual schematic become consciousness?
+        When does a difference engine become the search for truth? When does a personality simulation become the bitter mote... of a soul.
+    </string>
+	<string name="better_not_die">
+	     I think it would be better not to die, don\'t you?
+	</string>
+    <string name="service_id">com.tesseractmobile.pocketbot.service</string>
+    <string name="privacy">Privacy Policy</string>
+    <string name="privacy_url">http://www.tesseractmobile.com/legal/pocketbot-privacy-policy/</string>
+    <string name="permission_camera_rationale">Need the camera for Face Tracking</string>
+    <string name="ok">OK</string>
+</resources>
