@@ -45,6 +45,7 @@ public class PocketBotSettings {
     public static final String ROBOT_ID_NOT_SET = "NOT_SET";
     public static final String DEFAULT_ROBOT_NAME = "Robot-1";
     public static final String KEY_ROS_MASTER_URI = "ros_master_uri";
+    private static final String KEY_STARTING_ACTIVITY_ID = "start_activity_id";
 
 
     /**
@@ -297,6 +298,25 @@ public class PocketBotSettings {
     public static String getRosMasterUri(final Context context){
         //return null;
         return getSharedPrefs(context).getString(KEY_ROS_MASTER_URI, "");
+    }
+
+    /**
+     * Get the id of the activity that should be launched at startup
+     * @param context
+     * @return
+     */
+    public static int getStartingActivityId(final Context context) {
+        return getSharedPrefs(context).getInt(KEY_STARTING_ACTIVITY_ID, LauncherActivity.ACTIVITY_WIZARD);
+    }
+
+    /**
+     * Set the id of the activity to launch on startup
+     * @param context
+     * @param startingActivityId
+     * @return
+     */
+    public static boolean setStartingActvityId(final Context context, final int startingActivityId) {
+        return getSharedPrefs(context).edit().putInt(KEY_STARTING_ACTIVITY_ID, startingActivityId).commit();
     }
 
     public static Object getObject(final SharedPreferences sharedPreferences, final String key) {

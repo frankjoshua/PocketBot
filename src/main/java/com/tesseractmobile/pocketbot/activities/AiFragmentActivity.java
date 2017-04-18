@@ -1,5 +1,6 @@
 package com.tesseractmobile.pocketbot.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -131,5 +132,9 @@ public class AiFragmentActivity extends BaseFaceFragmentActivity implements AI {
 //                return null;
 //            }
 //        }.execute();
+    }
+
+    public static Intent getLaunchIntent(final Context context) {
+        return new Intent(context, AiFragmentActivity.class);
     }
 }
