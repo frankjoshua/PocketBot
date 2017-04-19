@@ -218,6 +218,8 @@ dependencies {
     compile ('hound.android:phrasespotter:1.6.0'){
         transitive=true
     }
+    //Custom progress bar
+    compile 'com.kofigyan.stateprogressbar:stateprogressbar:0.0.6'
     //Testing
     testCompile 'junit:junit:4.12'
     androidTestCompile "com.android.support:support-annotations:${supportLibVersion}"

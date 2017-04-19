@@ -48,19 +48,13 @@ public class BluetoothClassicFragmentActivity extends AiFragmentActivity {
             mBluetoothEnabled = true;
         }
 
-        findViewById(R.id.btnBluetooth).setOnClickListener(this);
     }
 
     @Override
     public void onClick(View view) {
-        if(view.getId() == R.id.btnBluetooth){
-            //Launch bluetooth dialog
-            final BluetoothDialog bluetoothDialog = new BluetoothDialog();
-            bluetoothDialog.show(getSupportFragmentManager(), "BLUETOOTH_DIALOG_FRAGMENT");
-            bluetoothDialog.setData(blueToothService.getDeviceList());
-        } else {
-            super.onClick(view);
-        }
+        final BluetoothDialog bluetoothDialog = new BluetoothDialog();
+        bluetoothDialog.show(getSupportFragmentManager(), "BLUETOOTH_DIALOG_FRAGMENT");
+        bluetoothDialog.setData(blueToothService.getDeviceList());
     }
 
     @Override

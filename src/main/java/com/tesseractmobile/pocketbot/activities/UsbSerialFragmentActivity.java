@@ -2,6 +2,7 @@ package com.tesseractmobile.pocketbot.activities;
 
 import android.app.Service;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.net.Uri;
@@ -69,5 +70,9 @@ public class UsbSerialFragmentActivity extends AiFragmentActivity {
     public void onStop() {
         unbindService(conn);
         super.onStop();
+    }
+
+    public static Intent getLaunchIntent(final Context context) {
+        return new Intent(context, UsbSerialFragmentActivity.class);
     }
 }

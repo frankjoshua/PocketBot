@@ -16,4 +16,10 @@ interface ConfigWizard {
     void applyConfig(Context context);
 
     void setRosMasterUri(String s);
+
+    void setShowFace(boolean b);
+
+    void setUseTelepresence(boolean b);
+
+    void nextStep();
 }

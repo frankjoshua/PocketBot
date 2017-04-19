@@ -356,6 +356,8 @@ public class PocketBotSettings {
             return sharedPreferences.getBoolean(PocketBotSettings.KEY_KEEP_ALIVE, PocketBotSettings.DEFAULT_KEEP_ALIVE);
         } else if (key.equals("App Restrictions")) {
             return sharedPreferences.getString(key, "");
+        } else if (key.equals(KEY_STARTING_ACTIVITY_ID)) {
+            return sharedPreferences.getInt(PocketBotSettings.KEY_STARTING_ACTIVITY_ID, LauncherActivity.ACTIVITY_WIZARD);
         } else {
             throw new UnsupportedOperationException("Unknown key: " + key);
         }

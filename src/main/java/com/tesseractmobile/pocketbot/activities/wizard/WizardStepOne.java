@@ -28,7 +28,7 @@ public class WizardStepOne extends WizardFragment implements View.OnClickListene
         if(v.getId() == R.id.btnOnRobot){
             getConfigWizard().setOnRobot(true);
             nextFragment(new WizardOnRobot());
-        } else if(v.getId() == R.id.btnRemote){
+        } else if(v.getId() == R.id.btnRemoteControl){
             getConfigWizard().setOnRobot(false);
             nextFragment(new WizardRemoteControl());
         }

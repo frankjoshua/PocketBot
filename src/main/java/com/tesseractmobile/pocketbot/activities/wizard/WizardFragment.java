@@ -28,7 +28,8 @@ public class WizardFragment extends Fragment {
      * @param fragment
      */
     protected void nextFragment(final Fragment fragment){
-        getFragmentManager().beginTransaction().add(R.id.fragment_placeholder, fragment).commit();
+        getFragmentManager().beginTransaction().replace(R.id.fragment_placeholder, fragment).commit();
+        ((ConfigWizard) getActivity()).nextStep();
     }
 
     protected void done(){

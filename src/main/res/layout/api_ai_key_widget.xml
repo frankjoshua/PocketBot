@@ -8,8 +8,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Client Access Token"
-        android:id="@+id/tvToken" />
+        android:text="Client Access Token" />
 
     <EditText
         android:layout_width="match_parent"
@@ -21,8 +20,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Subscription Key"
-        android:id="@+id/textView5" />
+        android:text="Subscription Key" />
 
     <EditText
         android:layout_width="match_parent"

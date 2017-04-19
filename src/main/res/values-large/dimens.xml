@@ -9,8 +9,6 @@
 	<dimen name="text_size_mouth">18dp</dimen>
 	<dimen name="width_camera_preview">480dp</dimen>
 	<dimen name="height_camera_preview">640dp</dimen>
-	<dimen name="width_eye_cartoon">400dp</dimen>
-	<dimen name="height_eye_cartoon">400dp</dimen>
-	<dimen name="width_mouth_cartoon">200dp</dimen>
+    <dimen name="width_mouth_cartoon">200dp</dimen>
 	<dimen name="height_mouth_cartoon">60dp</dimen>
 </resources>

@@ -31,7 +31,7 @@ public class WizardOnRobot extends WizardFragment implements View.OnClickListene
         }
         if(v.getId() == R.id.btnArduino){
             getConfigWizard().setUsb(true);
-            done();
+            nextFragment(new WizardFaceType());
         }
     }
 }

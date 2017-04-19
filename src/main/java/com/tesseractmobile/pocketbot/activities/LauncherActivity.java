@@ -34,16 +34,22 @@ public class LauncherActivity extends Activity {
      * @param startingActivityId
      */
     final static public void startActivityById(final Context context, final int startingActivityId) {
+        final Intent intent;
         switch (startingActivityId){
             case ACTIVITY_WIZARD:
-                context.startActivity(WizardActivity.getLaunchIntent(context));
+                intent = WizardActivity.getLaunchIntent(context);
                 break;
             case ROS_ACTIVITY:
-                context.startActivity(AiFragmentActivity.getLaunchIntent(context));
+                intent = AiFragmentActivity.getLaunchIntent(context);
+                break;
+            case USB_ACTIVITY:
+                intent = UsbSerialFragmentActivity.getLaunchIntent(context);
                 break;
             default:
                 throw new IllegalArgumentException("No activity found for " + startingActivityId);
         }
+        //Start activity
+        context.startActivity(intent);
     }
 
     public static Intent getLaunchIntent(final Context context) {

@@ -56,6 +56,7 @@ import com.tesseractmobile.pocketbot.activities.fragments.facefragments.FaceFrag
 import com.tesseractmobile.pocketbot.activities.fragments.facefragments.FaceFragmentFactory;
 import com.tesseractmobile.pocketbot.activities.fragments.facefragments.FaceInfo;
 import com.tesseractmobile.pocketbot.activities.fragments.facefragments.FaceListFragment;
+import com.tesseractmobile.pocketbot.activities.wizard.WizardActivity;
 import com.tesseractmobile.pocketbot.robot.AuthData;
 import com.tesseractmobile.pocketbot.robot.DataStore;
 import com.tesseractmobile.pocketbot.robot.Emotion;
@@ -523,14 +524,6 @@ public class BaseFaceFragmentActivity extends RosFragmentActivity implements Sha
             case R.id.sign_in_button:
                 mGoogleSignInController.startSignin(this, RC_SIGN_IN);
                 break;
-            case R.id.btnApiAi:
-                FragmentTransaction fragmentTransaction2 = getFragmentManager().beginTransaction();
-                ApiAiKeyDialog apiAiKeyDialog = new ApiAiKeyDialog();
-                apiAiKeyDialog.show(fragmentTransaction2, "API_AI_FRAGMENT");
-                break;
-            case R.id.btnFeedback:
-                launchFeedback();
-                break;
             case R.id.tvRobotId:
                 startActivityForResult(new Intent(this, MasterChooser.class), RosFragmentActivity.MASTER_CHOOSER_REQUEST_CODE);
                 break;
@@ -641,6 +634,10 @@ public class BaseFaceFragmentActivity extends RosFragmentActivity implements Sha
             return true;
         } else if(id == R.id.nav_feedback){
             launchFeedback();
+            return true;
+        } else if(id == R.id.nav_wizard){
+            startActivity(WizardActivity.getLaunchIntent(this));
+            finish();
             return true;
         }
         throw new UnsupportedOperationException("Not implemented! " + item.toString());
