@@ -120,7 +120,7 @@ android {
             versionNameSuffix "-beta"
             ext.betaDistributionGroupAliases="pocketbotbeta"
             ext.betaDistributionReleaseNotesFilePath="./CHANGELOG.md"
-            ext.betaDistributionNotifications=false
+            ext.betaDistributionNotifications=true
             //ext.betaDistributionGroupAliases="josh"
         }
         release {
