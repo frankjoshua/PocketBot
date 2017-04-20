@@ -9,8 +9,8 @@ stage('Stage Build'){
     node(){
         deleteDir()
         git credentialsId: credentialsId, url: gitUrl, branch: branch
-        sh "cd PocketBot && chmod +x ./gradlew"
-        sh "cd PocketBot && ./gradlew clean assembleDebug"
+        sh "chmod +x ./gradlew"
+        sh "./gradlew clean assembleDebug"
     }
 }
 
@@ -18,17 +18,17 @@ stage('Stage Build'){
 stage('Stage Unit Test'){
     node() {
         git credentialsId: credentialsId, url: gitUrl, branch: branch
-        sh "cd PocketBot && ./gradlew test"
+        sh "./gradlew test"
     }
 }
 
 stage('Stage Connected Test') {
     node('android') {
         git credentialsId: credentialsId, url: gitUrl, branch: branch
-        sh "cd PocketBot && ./gradlew uninstallAll"
-        sh "cd PocketBot && ./gradlew installDebug"
-        sh "cd PocketBot && ./gradlew grantPermissions"
-        sh "cd PocketBot && ./gradlew connectedDebugAndroidTest"
+        sh "./gradlew uninstallAll"
+        sh "./gradlew installDebug"
+        sh "./gradlew grantPermissions"
+        sh "./gradlew connectedDebugAndroidTest"
     }
 }
 
@@ -38,21 +38,21 @@ stage('Stage Beta Release'){
         git credentialsId: credentialsId, url: gitUrl, branch: branch
         sshagent([credentialsId]) {
             //Update build number
-            sh "cd PocketBot && ./gradlew incrementVersion"
-            sh "cd PocketBot && git config --global user.email \"jenkins@tesseractmobile.com\""
-            sh "cd PocketBot && git config --global user.name \"Jenkins\""
-            sh "cd PocketBot && git commit -a -m\"Updated version number from Jenkins build $buildNumber\""
-            sh 'cd PocketBot && git tag $(cat version.txt)'
-            sh "cd PocketBot && git pull origin master"
-            sh "cd PocketBot && git push origin master"
-            sh "cd PocketBot && git push --tags"
-            sh "cd PocketBot && git checkout beta"
-            sh "cd PocketBot && git merge origin/master"
-            sh "cd PocketBot && git push origin beta"
+            sh "./gradlew incrementVersion"
+            sh "git config --global user.email \"jenkins@tesseractmobile.com\""
+            sh "git config --global user.name \"Jenkins\""
+            sh "git commit -a -m\"Updated version number from Jenkins build $buildNumber\""
+            sh 'git tag $(cat version.txt)'
+            sh "git pull origin master"
+            sh "git push origin master"
+            sh "git push --tags"
+            sh "git checkout beta"
+            sh "git merge origin/master"
+            sh "git push origin beta"
             //Save Change Log
-            sh "cd PocketBot && ./gradlew gitChangelogTask"
+            sh "./gradlew gitChangelogTask"
             //Upload to Crashlytics beta
-            sh "cd PocketBot && ./gradlew assembleDebug crashlyticsUploadDistributionDebug"
+            sh "./gradlew assembleDebug crashlyticsUploadDistributionDebug"
         }
     }
 }
