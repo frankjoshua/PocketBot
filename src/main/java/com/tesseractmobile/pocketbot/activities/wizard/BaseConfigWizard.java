@@ -15,7 +15,7 @@ public class BaseConfigWizard implements ConfigWizard {
     private boolean mOnRobot;
     private boolean mWifi;
     private boolean mUsb;
-    private String mRosMasterUri;
+    private String mRosMasterUri = "http://localhost:11311";
     private boolean mShowFace;
     private boolean mUseTelepresence;
 

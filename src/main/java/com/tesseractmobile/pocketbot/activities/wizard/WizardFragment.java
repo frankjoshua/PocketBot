@@ -33,9 +33,6 @@ public class WizardFragment extends Fragment {
     }
 
     protected void done(){
-        getConfigWizard().applyConfig(getActivity());
-        //Restart the app by launching the Launcher Activity
-        getActivity().startActivity(LauncherActivity.getLaunchIntent(getActivity()));
-        getActivity().finish();
+        ((WizardActivity) getActivity()).done();
     }
 }

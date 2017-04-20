@@ -2,13 +2,19 @@ package com.tesseractmobile.pocketbot.activities.wizard;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
+import android.text.Layout;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
 import com.kofigyan.stateprogressbar.StateProgressBar;
 import com.tesseractmobile.pocketbot.R;
+import com.tesseractmobile.pocketbot.activities.LauncherActivity;
 
 /**
  * Created by josh on 4/15/17.
@@ -19,12 +25,14 @@ public class WizardActivity extends FragmentActivity implements View.OnClickList
     private static final String STEP_ONE_FRAGMENT = "step_one_fragment";
     final ConfigWizard configWizard = new BaseConfigWizard();
     private StateProgressBar stateProgressBar;
+    private View loadingBar;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.wizard);
         findViewById(R.id.btnSkip).setOnClickListener(this);
+        loadingBar = findViewById(R.id.pbLoading);
         stateProgressBar = (StateProgressBar) findViewById(R.id.progressBar);
         stateProgressBar.setStateDescriptionData(new String[]{"DEVICE","CONTROL","ROS","4"});
         stateProgressBar.setMaxStateNumber(StateProgressBar.StateNumber.THREE);
@@ -38,7 +46,42 @@ public class WizardActivity extends FragmentActivity implements View.OnClickList
     @Override
     public void onClick(View v) {
         if(v.getId() == R.id.btnSkip){
-            finish();
+            done();
+        }
+    }
+
+    public void done() {
+        loadingBar.setVisibility(View.VISIBLE);
+        RelativeLayout layout = (RelativeLayout) findViewById(R.id.wizard);
+        disableLayouts(layout);
+        new AsyncTask<Void, Void, Void>(){
+
+            @Override
+            protected Void doInBackground(Void... params) {
+                applyConfig(getApplicationContext());
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                //Restart the app by launching the Launcher Activity
+                startActivity(LauncherActivity.getLaunchIntent(getApplicationContext()));
+                finish();
+            }
+        }.execute();
+    }
+
+    private void disableLayouts(ViewGroup layout) {
+        if(layout.getId() == R.id.pbLoading){
+            return;
+        }
+        for (int i = 0; i < layout.getChildCount(); i++) {
+            View child = layout.getChildAt(i);
+            if(child instanceof ViewGroup){
+                disableLayouts((ViewGroup) child);
+            }
+            child.setEnabled(false);
         }
     }
 
@@ -95,4 +138,5 @@ public class WizardActivity extends FragmentActivity implements View.OnClickList
                 break;
         }
     }
+
 }
