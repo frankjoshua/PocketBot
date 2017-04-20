@@ -35,6 +35,7 @@ public class WizardStepRos extends WizardFragment implements View.OnClickListene
         editTextMasterUri = (EditText) view.findViewById(R.id.edMasterUri);
         editTextMasterUri.setText("10.10.10.1");
         editTextMasterUri.addTextChangedListener(this);
+        onTextChanged(editTextMasterUri.getText().toString(), 0, 0, 0);
         return view;
     }
 

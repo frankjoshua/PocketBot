@@ -25,7 +25,7 @@ public class WizardActivity extends FragmentActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.wizard);
         findViewById(R.id.btnSkip).setOnClickListener(this);
-        stateProgressBar = (StateProgressBar) findViewById(R.id.your_state_progress_bar_id);
+        stateProgressBar = (StateProgressBar) findViewById(R.id.progressBar);
         stateProgressBar.setStateDescriptionData(new String[]{"DEVICE","CONTROL","ROS","4"});
         stateProgressBar.setMaxStateNumber(StateProgressBar.StateNumber.THREE);
         getFragmentManager().beginTransaction().replace(R.id.fragment_placeholder, new WizardStepOne(), STEP_ONE_FRAGMENT).commit();

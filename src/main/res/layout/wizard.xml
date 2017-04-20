@@ -4,21 +4,8 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <FrameLayout android:id="@+id/fragment_placeholder"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-    <Button
-        android:id="@+id/btnSkip"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:text="Skip"/>
     <com.kofigyan.stateprogressbar.StateProgressBar
-        android:id="@+id/your_state_progress_bar_id"
+        android:id="@+id/progressBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:spb_currentStateNumber="one"
@@ -30,5 +17,26 @@
         app:spb_currentStateDescriptionColor="#009688"
         app:spb_stateDescriptionColor="#808080"
         app:spb_animateToCurrentProgressState="true"
-        app:spb_checkStateCompleted="true"/>
+        app:spb_checkStateCompleted="true"
+        android:layout_alignParentTop="true"
+        android:layout_margin="5dp"/>
+
+    <Button
+        android:id="@+id/btnSkip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:background="@null"
+        android:text="Skip"/>
+
+    <FrameLayout android:id="@+id/fragment_placeholder"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/progressBar"
+        android:layout_above="@+id/btnSkip"/>
+
+
+
 </RelativeLayout>
