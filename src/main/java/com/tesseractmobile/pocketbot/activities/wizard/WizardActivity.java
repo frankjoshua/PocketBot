@@ -1,8 +1,11 @@
 package com.tesseractmobile.pocketbot.activities.wizard;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
@@ -34,9 +37,27 @@ public class WizardActivity extends FragmentActivity implements View.OnClickList
         findViewById(R.id.btnSkip).setOnClickListener(this);
         loadingBar = findViewById(R.id.pbLoading);
         stateProgressBar = (StateProgressBar) findViewById(R.id.progressBar);
-        stateProgressBar.setStateDescriptionData(new String[]{"DEVICE","CONTROL","ROS","4"});
-        stateProgressBar.setMaxStateNumber(StateProgressBar.StateNumber.THREE);
+        stateProgressBar.setStateDescriptionData(new String[]{"DEVICE","CONTROL","ROS","FACE"});
+        stateProgressBar.setMaxStateNumber(StateProgressBar.StateNumber.FOUR);
         getFragmentManager().beginTransaction().replace(R.id.fragment_placeholder, new WizardStepOne(), STEP_ONE_FRAGMENT).commit();
+        checkForPermissions();
+    }
+
+    /**
+     * Check for Android M permissions
+     */
+    private void checkForPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            final String[] permissionList = new String[]{
+                    Manifest.permission.CAMERA,
+                    Manifest.permission.RECORD_AUDIO
+            };
+            for(final String permission : permissionList){
+                if(checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED){
+                    requestPermissions(permissionList, 0);
+                }
+            }
+        }
     }
 
     public static Intent getLaunchIntent(final Context context) {
@@ -121,6 +142,11 @@ public class WizardActivity extends FragmentActivity implements View.OnClickList
     }
 
     @Override
+    public boolean isOnRobot() {
+        return configWizard.isOnRobot();
+    }
+
+    @Override
     public void nextStep() {
         configWizard.nextStep();
         switch (stateProgressBar.getCurrentStateNumber()){
@@ -138,5 +164,7 @@ public class WizardActivity extends FragmentActivity implements View.OnClickList
                 break;
         }
     }
+
+
 
 }

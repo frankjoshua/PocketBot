@@ -10,7 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:spb_currentStateNumber="one"
-        app:spb_maxStateNumber="four"
+        app:spb_maxStateNumber="five"
         app:spb_stateBackgroundColor="#BDBDBD"
         app:spb_stateForegroundColor="#009688"
         app:spb_stateNumberBackgroundColor="#808080"

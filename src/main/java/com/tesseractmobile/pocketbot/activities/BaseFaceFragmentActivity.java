@@ -207,7 +207,8 @@ public class BaseFaceFragmentActivity extends RosFragmentActivity implements Sha
             };
             for(final String permission : permissionList){
                 if(checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED){
-                    requestPermissions(new String[]{permission}, 0);
+                    requestPermissions(permissionList, 0);
+                    return;
                 }
             }
         }

@@ -43,7 +43,12 @@ public class WizardStepRos extends WizardFragment implements View.OnClickListene
     public void onClick(View v) {
         if(v.getId() == R.id.btnOk){
             getConfigWizard().setRosMasterUri(tvMasterUri.getText().toString());
-            done();
+            if(getConfigWizard().isOnRobot()){
+                //If on the robot show the face wizard
+                nextFragment(new WizardFaceType());
+            } else {
+                done();
+            }
         }
     }
 

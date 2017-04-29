@@ -88,4 +88,9 @@ public class BaseConfigWizard implements ConfigWizard {
     public void nextStep() {
 
     }
+
+    @Override
+    public boolean isOnRobot() {
+        return mOnRobot;
+    }
 }

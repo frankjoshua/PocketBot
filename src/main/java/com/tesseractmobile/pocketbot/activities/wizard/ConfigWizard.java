@@ -22,4 +22,6 @@ interface ConfigWizard {
     void setUseTelepresence(boolean b);
 
     void nextStep();
+
+    boolean isOnRobot();
 }
