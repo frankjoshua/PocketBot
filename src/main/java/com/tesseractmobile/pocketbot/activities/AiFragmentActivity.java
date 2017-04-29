@@ -35,8 +35,8 @@ public class AiFragmentActivity extends BaseFaceFragmentActivity implements AI {
         Fabric.with(this, new Crashlytics());
         final String token = PocketBotSettings.getApiAiToken(this);
         //final String key = PocketBotSettings.getApiAiKey(this);
-        final AIConfiguration aiConfig = new AIConfiguration(token, AIConfiguration.SupportedLanguages.English, AIConfiguration.RecognitionEngine.System);
-        mAiDataService = new AIDataService(this, aiConfig);
+        final AIConfiguration aiConfig = new AIConfiguration(token);
+        mAiDataService = new AIDataService(aiConfig, null);
         Robot.get().setAI(this);
         setSensorDelay(120);
     }
@@ -113,25 +113,25 @@ public class AiFragmentActivity extends BaseFaceFragmentActivity implements AI {
             return;
         }
         //TODO: Disabled until http://stackoverflow.com/questions/39195771/zipexception-duplicate-entry-during-android-build
-//        final AIRequest aiRequest = new AIRequest();
-//        aiRequest.setQuery(input);
-//
-//        new AsyncTask<Void, Void, Void>(){
-//
-//            @Override
-//            protected Void doInBackground(Void... params) {
-//                try {
-//                    final AIResponse aiResponse = mAiDataService.request(aiRequest);
-//                    // process response object here...
-//                    handleAiResponse(aiResponse);
-//
-//
-//                } catch (final AIServiceException e) {
-//                    Robot.get().say("I had an unhandled error.");
-//                }
-//                return null;
-//            }
-//        }.execute();
+        final AIRequest aiRequest = new AIRequest();
+        aiRequest.setQuery(input);
+
+        new AsyncTask<Void, Void, Void>(){
+
+            @Override
+            protected Void doInBackground(Void... params) {
+                try {
+                    final AIResponse aiResponse = mAiDataService.request(aiRequest);
+                    // process response object here...
+                    handleAiResponse(aiResponse);
+
+
+                } catch (final AIServiceException e) {
+                    Robot.get().say("I had an unhandled error.");
+                }
+                return null;
+            }
+        }.execute();
     }
 
     public static Intent getLaunchIntent(final Context context) {

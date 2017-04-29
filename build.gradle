@@ -201,7 +201,10 @@ dependencies {
     compile 'com.android.support:multidex:1.0.1'
     compile 'com.google.code.gson:gson:2.3.1'
     //AI
-    compile 'ai.api:sdk:1.9.0@aar'
+    compile 'ai.api:libai:1.4.8'
+    //compile 'ai.api:sdk:2.0.5@aar'
+    // api.ai SDK dependencies
+    compile 'commons-io:commons-io:2.4'
     //TODO: Disabled until http://stackoverflow.com/questions/39195771/zipexception-duplicate-entry-during-android-build
     //compile 'commons-io:commons-io:2.4'
     //Firebase - cloud data storage

@@ -10,6 +10,7 @@ import android.os.IBinder;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.support.multidex.MultiDex;
+import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 import com.quickblox.auth.session.QBSettings;
@@ -81,9 +82,9 @@ public class PocketBotApp extends Application{
             }
         };
 
-        final Intent bindIntent = new Intent(this, HoundVoiceRecognitionService.class);
+        final Intent bindIntent = new Intent(this, GoogleVoiceRecognitionService.class);
         if (bindService(bindIntent, voiceRecognitionServiceConnection, Service.BIND_AUTO_CREATE) == false) {
-            throw new UnsupportedOperationException("Error binding to service");
+            Log.e(PocketBotApp.class.getSimpleName(), "Error binding to service");
         }
     }
 
