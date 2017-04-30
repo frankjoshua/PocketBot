@@ -334,7 +334,10 @@ public class RemoteControl implements ChildEventListener, DataStore.OnAuthComple
                 mKeepAliveThread.setName("RemoteKeepAliveThread");
                 mKeepAliveThread.startThread();
             } else {
-                mKeepAliveThread.stopThread();
+                KeepAliveThread keepAliveThread = this.mKeepAliveThread;
+                if(keepAliveThread != null){
+                    keepAliveThread.stopThread();
+                }
             }
         }
     }
