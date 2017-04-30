@@ -16,6 +16,11 @@ import com.tesseractmobile.pocketbot.views.MouthView;
 import java.util.ArrayList;
 
 import de.measite.minidns.record.A;
+import io.reactivex.Observer;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.subjects.BehaviorSubject;
 
 /**
  * Created by josh on 11/16/2015.
@@ -28,8 +33,9 @@ abstract public class BaseRobot implements RobotInterface, MouthView.SpeechCompl
     private static final int TIME_BETWEEN_HUMAN_SPOTTING = 10000;
     public static final String TAG = "PocketBot";
 
+    /** Updated when emotion changes */
+    private final BehaviorSubject<Emotion> mEmotion = BehaviorSubject.create();
 
-    private Emotion mEmotion;
     private RobotFace mRobotFace;
     private SpeechState mSpeechState = SpeechState.READY;
     private ArrayList<SpeechStateListener> mSpeechStateListeners = new ArrayList<SpeechStateListener>();
@@ -86,8 +92,12 @@ abstract public class BaseRobot implements RobotInterface, MouthView.SpeechCompl
 
     @Override
     public void setEmotion(Emotion emotion) {
-        mEmotion = emotion;
+        mEmotion.onNext(emotion);
         mRobotFace.setEmotion(emotion);
+    }
+
+    public BehaviorSubject<Emotion> getEmotion(){
+        return mEmotion;
     }
 
     @Override

@@ -13,6 +13,8 @@ import com.tesseractmobile.pocketbot.robot.VoiceRecognitionService;
 import com.tesseractmobile.pocketbot.service.VoiceRecognitionListener;
 import com.tesseractmobile.pocketbot.service.GoogleVoiceRecognitionService;
 
+import io.reactivex.subjects.BehaviorSubject;
+
 /**
  * Created by josh on 10/17/2015.
  */
@@ -64,6 +66,12 @@ public interface RobotInterface {
      * @param emotion
      */
     void setEmotion(final Emotion emotion);
+
+    /**
+     * Get a stream of emotional states
+     * @return
+     */
+    BehaviorSubject<Emotion> getEmotion();
 
     /**
      * Set the active robot face

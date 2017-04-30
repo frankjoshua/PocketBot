@@ -5,6 +5,7 @@ import android.os.SystemClock;
 import java.net.URI;
 
 import com.tesseractmobile.pocketbot.robot.BaseRobot;
+import com.tesseractmobile.pocketbot.robot.Emotion;
 import com.tesseractmobile.pocketbot.robot.Robot;
 import com.tesseractmobile.pocketbot.robot.SensorData;
 import com.tesseractmobile.pocketbot.robot.SpeechListener;
@@ -20,6 +21,10 @@ import org.ros.node.NodeMainExecutor;
 import org.ros.node.topic.Publisher;
 
 import geometry_msgs.Twist;
+import io.reactivex.Observer;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 import sensor_msgs.Imu;
 import std_msgs.String;
 
@@ -50,6 +55,38 @@ public class PocketBotNode implements NodeMain {
         initTeleopPublisher(connectedNode);
         initImuPublisher(connectedNode);
         initVoicePublisher(connectedNode);
+        initEmotionPublisher(connectedNode);
+    }
+
+    /**
+     * Sends emotional state to ROS
+     * @param connectedNode
+     */
+    private void initEmotionPublisher(final ConnectedNode connectedNode) {
+        final Publisher<String> emotionPublisher = connectedNode.newPublisher("~emotion", String._TYPE);
+        final String emotionString = emotionPublisher.newMessage();
+        Robot.get().getEmotion().subscribe(new Observer<Emotion>() {
+            @Override
+            public void onSubscribe(@NonNull Disposable d) {
+
+            }
+
+            @Override
+            public void onNext(@NonNull Emotion emotion) {
+                emotionString.setData(emotion.toString());
+                emotionPublisher.publish(emotionString);
+            }
+
+            @Override
+            public void onError(@NonNull Throwable e) {
+
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        });
     }
 
     /**
