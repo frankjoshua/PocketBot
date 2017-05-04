@@ -26,9 +26,14 @@
         android:id="@+id/edMasterUri"
         android:layout_width="220dp"
         android:layout_height="wrap_content"
+        android:inputType="number|numberDecimal"
+        android:digits="0123456789."
         android:layout_alignParentLeft="true"
         android:layout_marginLeft="20dp"
-        android:layout_below="@+id/tvMasterUri"/>
+        android:layout_below="@+id/tvMasterUri"
+        android:hint="192.168.1.1">
+        <requestFocus/>
+    </android.support.design.widget.TextInputEditText>
 
 
     <Button

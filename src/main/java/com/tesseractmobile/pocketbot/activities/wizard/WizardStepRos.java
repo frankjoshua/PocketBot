@@ -1,6 +1,7 @@
 package com.tesseractmobile.pocketbot.activities.wizard;
 
 import android.app.Fragment;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.Editable;
@@ -33,7 +34,6 @@ public class WizardStepRos extends WizardFragment implements View.OnClickListene
         tvMasterUri = (TextView) view.findViewById(R.id.tvMasterUri);
         btnOk = (Button) view.findViewById(R.id.btnOk);
         editTextMasterUri = (EditText) view.findViewById(R.id.edMasterUri);
-        editTextMasterUri.setText("10.10.10.1");
         editTextMasterUri.addTextChangedListener(this);
         onTextChanged(editTextMasterUri.getText().toString(), 0, 0, 0);
         return view;
@@ -63,8 +63,10 @@ public class WizardStepRos extends WizardFragment implements View.OnClickListene
         tvMasterUri.setText(url);
         if(Patterns.WEB_URL.matcher(url).matches()){
             btnOk.setEnabled(true);
+            tvMasterUri.setTextColor(Color.BLUE);
         } else {
             btnOk.setEnabled(false);
+            tvMasterUri.setTextColor(Color.RED);
         }
     }
 
