@@ -372,10 +372,10 @@ public class EyeView extends View {
         //Create an animation
         startAnimation(250);
     }
-    
+
     public void look(final float x, final float y){
-        final float xDest = Math.max(Math.min(x, 1.5f), 0.5f);
-        final float yDest = Math.max(Math.min(y, 1.5f), 0.5f);
+        final float xDest = Math.max(Math.min(x, 1.3f), 0.7f);
+        final float yDest = Math.max(Math.min(y, 1.3f), 0.7f);
         //Don't update for small changes
         if(Math.abs(yDest - mCenterEyeYDest) > .1f || Math.abs(xDest - mCenterEyeXDest) > .1f){
             saveCurrentEyeLids();
