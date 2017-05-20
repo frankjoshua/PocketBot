@@ -3,6 +3,7 @@ package com.tesseractmobile.pocketbot.activities;
 import android.os.SystemClock;
 
 import java.net.URI;
+import java.util.UUID;
 
 import com.tesseractmobile.pocketbot.robot.BaseRobot;
 import com.tesseractmobile.pocketbot.robot.Emotion;
@@ -41,7 +42,7 @@ public class PocketBotNode implements NodeMain {
                 NodeConfiguration.newPublic(InetAddressFactory.newNonLoopback().getHostAddress(),
                         masterUri);
         nodeMainExecutor
-                .execute(this, nodeConfiguration.setNodeName("pocketbot"));
+                .execute(this, nodeConfiguration.setNodeName("pocketbot_" + UUID.randomUUID().toString().substring(0, 4)));
     }
 
     @Override
@@ -63,7 +64,7 @@ public class PocketBotNode implements NodeMain {
      * @param connectedNode
      */
     private void initEmotionPublisher(final ConnectedNode connectedNode) {
-        final Publisher<String> emotionPublisher = connectedNode.newPublisher("~emotion", String._TYPE);
+        final Publisher<String> emotionPublisher = connectedNode.newPublisher("/pocketbot/emotion", String._TYPE);
         final String emotionString = emotionPublisher.newMessage();
         Robot.get().getEmotion().subscribe(new Observer<Emotion>() {
             @Override
