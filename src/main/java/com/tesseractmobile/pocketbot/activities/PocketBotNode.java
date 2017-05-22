@@ -37,12 +37,14 @@ import std_msgs.String;
  */
 public class PocketBotNode implements NodeMain {
 
+    public final static java.lang.String NODE_PREFIX = "pocketbot";
+
     public PocketBotNode(final NodeMainExecutor nodeMainExecutor, final URI masterUri) {
         NodeConfiguration nodeConfiguration =
                 NodeConfiguration.newPublic(InetAddressFactory.newNonLoopback().getHostAddress(),
                         masterUri);
         nodeMainExecutor
-                .execute(this, nodeConfiguration.setNodeName("pocketbot_" + UUID.randomUUID().toString().substring(0, 4)));
+                .execute(this, nodeConfiguration.setNodeName(NODE_PREFIX + "_" + UUID.randomUUID().toString().substring(0, 4)));
     }
 
     @Override
@@ -64,7 +66,7 @@ public class PocketBotNode implements NodeMain {
      * @param connectedNode
      */
     private void initEmotionPublisher(final ConnectedNode connectedNode) {
-        final Publisher<String> emotionPublisher = connectedNode.newPublisher("/pocketbot/emotion", String._TYPE);
+        final Publisher<String> emotionPublisher = connectedNode.newPublisher("/" + NODE_PREFIX + "/emotion", String._TYPE);
         final String emotionString = emotionPublisher.newMessage();
         Robot.get().getEmotion().subscribe(new Observer<Emotion>() {
             @Override
@@ -95,8 +97,8 @@ public class PocketBotNode implements NodeMain {
      * @param connectedNode
      */
     private void initVoicePublisher(final ConnectedNode connectedNode) {
-        final Publisher<String> aiPublisher = connectedNode.newPublisher("~ai_speech_out", String._TYPE);
-        final Publisher<String> speechPublisher = connectedNode.newPublisher("~speech", String._TYPE);
+        final Publisher<String> aiPublisher = connectedNode.newPublisher("/" + NODE_PREFIX + "/ai_speech_out", String._TYPE);
+        final Publisher<String> speechPublisher = connectedNode.newPublisher("/" + NODE_PREFIX + "/speech", String._TYPE);
         final String string = speechPublisher.newMessage();
         final String aiString = aiPublisher.newMessage();
         Robot.get().registerSpeechListener(new SpeechListener() {
@@ -115,7 +117,7 @@ public class PocketBotNode implements NodeMain {
     }
 
     private void initImuPublisher(final ConnectedNode connectedNode) {
-        final Publisher<Imu> publisher = connectedNode.newPublisher("~imu", Imu._TYPE);
+        final Publisher<Imu> publisher = connectedNode.newPublisher("/" + NODE_PREFIX + "/imu", Imu._TYPE);
         final Imu imu = publisher.newMessage();
         imu.setLinearAccelerationCovariance(new double[]{0, 0, 0, 0, 0, 0, 0, 0, 0});
         imu.setAngularVelocityCovariance(new double[]{0, 0, 0, 0, 0, 0, 0, 0, 0});
@@ -148,7 +150,7 @@ public class PocketBotNode implements NodeMain {
     }
 
     private void initFacePublisher(final ConnectedNode connectedNode) {
-        final Publisher<Twist> publisher = connectedNode.newPublisher("~face", Twist._TYPE);
+        final Publisher<Twist> publisher = connectedNode.newPublisher("/" + NODE_PREFIX + "/face", Twist._TYPE);
         final Twist msg = publisher.newMessage();
         Robot.get().registerSensorListener(new BaseRobot.SensorListener() {
             @Override
@@ -163,7 +165,7 @@ public class PocketBotNode implements NodeMain {
 
     private void initTeleopPublisher(ConnectedNode connectedNode) {
 
-        final Publisher<Twist> teleopPublisher = connectedNode.newPublisher("~cmd_vel", Twist._TYPE);
+        final Publisher<Twist> teleopPublisher = connectedNode.newPublisher("/" + NODE_PREFIX + "/cmd_vel", Twist._TYPE);
         final Twist msg = teleopPublisher.newMessage();
         Robot.get().registerSensorListener(new BaseRobot.SensorListener() {
             @Override
