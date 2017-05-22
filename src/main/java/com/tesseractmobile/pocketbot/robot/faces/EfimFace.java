@@ -11,7 +11,6 @@ import com.tesseractmobile.pocketbot.robot.model.Face;
 import com.tesseractmobile.pocketbot.robot.model.Speech;
 import com.tesseractmobile.pocketbot.views.EyeView;
 import com.tesseractmobile.pocketbot.views.MouthView;
-import com.tesseractmobile.pocketbot.views.MouthView.SpeechCompleteListener;
 
 /**
  * Created by josh on 10/17/2015.
@@ -33,8 +32,8 @@ public class EfimFace extends BaseFace implements RobotFace, OnClickListener{
         }
     };
 
-    public EfimFace(final View view){
-
+    public EfimFace(final View view, final RobotInterface robotInterface){
+        setRobotInterface(robotInterface);
         //Init views
         mouthView = (MouthView) view.findViewById(R.id.mouthView);
         mLeftEye = (EyeView) view.findViewById(R.id.eyeViewLeft);

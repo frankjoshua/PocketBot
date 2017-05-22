@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 
 import com.tesseractmobile.pocketbot.R;
 import com.tesseractmobile.pocketbot.robot.RemoteControl;
+import com.tesseractmobile.pocketbot.robot.Robot;
 import com.tesseractmobile.pocketbot.robot.SensorData;
 import com.tesseractmobile.pocketbot.robot.faces.EfimFace;
 import com.tesseractmobile.pocketbot.robot.faces.RobotFace;
@@ -21,7 +22,6 @@ import io.reactivex.disposables.Disposable;
  */
 public class EfimFaceFragment extends FaceFragment{
 
-    private RobotFace mRobotFace;
     private Disposable mControlDisposable;
 
     @Override
@@ -34,12 +34,6 @@ public class EfimFaceFragment extends FaceFragment{
     }
 
     @Override
-    public RobotFace getRobotFace(final RobotInterface robotInterface) {
-        mRobotFace.setRobotInterface(robotInterface);
-        return mRobotFace;
-    }
-
-    @Override
     public boolean isUseFaceTracking() {
         return true;
     }
@@ -47,12 +41,11 @@ public class EfimFaceFragment extends FaceFragment{
     @Override
     protected View createView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.robot_face, null);
-        setFace(new EfimFace(view));
+        setFace(new EfimFace(view, Robot.get()));
         return view;
     }
 
     protected void setFace(final RobotFace face){
-        mRobotFace = face;
         RemoteControl.get().getControlSubject().subscribe(new Observer<SensorData.Control>() {
             @Override
             public void onSubscribe(@NonNull Disposable d) {

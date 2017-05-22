@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.tesseractmobile.pocketbot.R;
+import com.tesseractmobile.pocketbot.robot.Robot;
 import com.tesseractmobile.pocketbot.robot.faces.CartoonFace;
 
 /**
@@ -16,7 +17,7 @@ public class CartoonFaceFragment extends EfimFaceFragment {
     @Override
     protected View createView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.cartoon_face, null);
-        setFace(new CartoonFace(view));
+        setFace(new CartoonFace(view, Robot.get()));
         return view;
     }
 

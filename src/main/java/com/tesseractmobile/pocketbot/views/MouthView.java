@@ -21,16 +21,18 @@ import android.speech.tts.UtteranceProgressListener;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.Gravity;
-import android.widget.TextView;
 
 import com.tesseractmobile.pocketbot.R;
 import com.tesseractmobile.pocketbot.activities.SpeechState;
 import com.tesseractmobile.pocketbot.robot.Robot;
-import com.tesseractmobile.pocketbot.robot.SpeechStateListener;
 
 import java.util.HashMap;
 
-public class MouthView extends android.support.v7.widget.AppCompatTextView implements OnInitListener, OnDataCaptureListener, SpeechStateListener{
+import io.reactivex.Observer;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.disposables.Disposable;
+
+public class MouthView extends android.support.v7.widget.AppCompatTextView implements OnInitListener, OnDataCaptureListener{
 
     final Handler handler = new Handler();
     private final TextToSpeech mTts;
@@ -51,6 +53,7 @@ public class MouthView extends android.support.v7.widget.AppCompatTextView imple
     private int mMouthDx = 100;
     private int mMouthDy = 100;
     private boolean mListening = false;
+    private Disposable mSpeechStateDisposable;
 
     public MouthView(final Context context, final AttributeSet attrs) {
         super(context, attrs);
@@ -113,7 +116,32 @@ public class MouthView extends android.support.v7.widget.AppCompatTextView imple
         mMicrophonePaint.setAlpha(100);
 
         //Listen for speech state changes
-        Robot.get().registerSpeechChangeListener(this);
+        Robot.get().getSpeechStateSubject().subscribe(new Observer<SpeechState>() {
+            @Override
+            public void onSubscribe(@NonNull Disposable d) {
+                mSpeechStateDisposable = d;
+            }
+
+            @Override
+            public void onNext(@NonNull SpeechState speechState) {
+                if(speechState == SpeechState.LISTENING){
+                    mListening = true;
+                } else {
+                    mListening = false;
+                }
+                postInvalidate();
+            }
+
+            @Override
+            public void onError(@NonNull Throwable e) {
+
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        });
     }
 
     
@@ -211,6 +239,10 @@ public class MouthView extends android.support.v7.widget.AppCompatTextView imple
     protected void onDetachedFromWindow() {
         mTts.stop();
         mTts.shutdown();
+        final Disposable disposable = mSpeechStateDisposable;
+        if(disposable != null && !disposable.isDisposed()){
+            disposable.dispose();
+        }
         super.onDetachedFromWindow();
     }
 
@@ -249,16 +281,6 @@ public class MouthView extends android.support.v7.widget.AppCompatTextView imple
         invalidate();
     }
 
-    @Override
-    public void onSpeechStateChange(SpeechState speechState) {
-        if(speechState == SpeechState.LISTENING){
-            mListening = true;
-        } else {
-            mListening = false;
-        }
-        postInvalidate();
-    }
-
     private enum State {
         TALKING, NOT_TALKING
     }
@@ -282,9 +304,4 @@ public class MouthView extends android.support.v7.widget.AppCompatTextView imple
         updateWave(fft);
     }
 
-
-
-    public interface SpeechCompleteListener {
-        public void onSpeechComplete();
-    }
 }

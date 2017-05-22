@@ -418,19 +418,13 @@ public class BaseFaceFragmentActivity extends RosFragmentActivity implements Sha
         final FaceFragment faceFragment = FaceFragmentFactory.getFaceFragment(faceId);
         final boolean isUseFaceTracking = faceFragment.isUseFaceTracking() && checkGooglePlayServices();
 
-
         if(supportFragmentManager.findFragmentByTag(FRAGMENT_FACE) != null){
             ft.replace(R.id.faceView, faceFragment, FRAGMENT_FACE);
         } else {
             ft.add(R.id.faceView, faceFragment, FRAGMENT_FACE);
         }
 
-        faceFragment.setOnCompleteListener(new CallbackFragment.OnCompleteListener() {
-            @Override
-            public void onComplete() {
-                Robot.get().setRobotFace(faceFragment.getRobotFace(Robot.get()));
-            }
-        });
+        //Check if face tracking is used
         if(isUseFaceTracking){
             if(mFaceTrackingActive == false) {
                 mFaceTrackingActive = true;

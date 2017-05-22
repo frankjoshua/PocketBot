@@ -34,12 +34,6 @@ public class EfimTelepresenceFaceFragment extends QuickBloxFragment{
     private Disposable mControlDisposable;
 
     @Override
-    public RobotFace getRobotFace(final RobotInterface robotInterface) {
-        mRobotFace.setRobotInterface(robotInterface);
-        return mRobotFace;
-    }
-
-    @Override
     public boolean isUseFaceTracking() {
         return false;
     }
@@ -47,7 +41,7 @@ public class EfimTelepresenceFaceFragment extends QuickBloxFragment{
     @Override
     protected View createView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.robot_face, null);
-        mRobotFace = new EfimFace(view);
+        mRobotFace = new EfimFace(view, Robot.get());
         final View btnSignIn = view.findViewById(R.id.sign_in_button);
         final Activity activity = getActivity();
         final View progressBar = view.findViewById(R.id.pbSignIn);

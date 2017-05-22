@@ -7,8 +7,8 @@ import android.view.View;
  */
 public class CartoonFace extends EfimFace {
 
-    public CartoonFace(View view) {
-        super(view);
+    public CartoonFace(final View view, final RobotInterface robotInterface) {
+        super(view, robotInterface);
     }
 
 }
