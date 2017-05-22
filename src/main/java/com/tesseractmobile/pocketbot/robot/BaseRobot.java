@@ -93,7 +93,6 @@ abstract public class BaseRobot implements RobotInterface, MouthView.SpeechCompl
     @Override
     public void setEmotion(Emotion emotion) {
         mEmotion.onNext(emotion);
-        mRobotFace.setEmotion(emotion);
     }
 
     public BehaviorSubject<Emotion> getEmotion(){
