@@ -14,20 +14,24 @@ import com.tesseractmobile.pocketbot.R;
 import com.tesseractmobile.pocketbot.robot.AuthData;
 import com.tesseractmobile.pocketbot.robot.DataStore;
 import com.tesseractmobile.pocketbot.robot.RemoteControl;
-import com.tesseractmobile.pocketbot.robot.RemoteListener;
 import com.tesseractmobile.pocketbot.robot.Robot;
 import com.tesseractmobile.pocketbot.robot.SensorData;
 import com.tesseractmobile.pocketbot.robot.faces.EfimFace;
 import com.tesseractmobile.pocketbot.robot.faces.RobotFace;
 import com.tesseractmobile.pocketbot.robot.faces.RobotInterface;
 
+import io.reactivex.Observer;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.disposables.Disposable;
+
 /**
  * Created by josh on 10/18/2015.
  */
-public class EfimTelepresenceFaceFragment extends QuickBloxFragment implements RemoteListener{
+public class EfimTelepresenceFaceFragment extends QuickBloxFragment{
 
     private static final String TAG = EfimTelepresenceFaceFragment.class.getSimpleName();
     private EfimFace mRobotFace;
+    private Disposable mControlDisposable;
 
     @Override
     public RobotFace getRobotFace(final RobotInterface robotInterface) {
@@ -75,14 +79,37 @@ public class EfimTelepresenceFaceFragment extends QuickBloxFragment implements R
     public void onResume() {
         super.onResume();
         //Listen to remote messages
-        RemoteControl.get().registerRemoteListener(this);
+        RemoteControl.get().getControlSubject().subscribe(new Observer<SensorData.Control>() {
+            @Override
+            public void onSubscribe(@NonNull Disposable d) {
+                mControlDisposable = d;
+            }
+
+            @Override
+            public void onNext(@NonNull SensorData.Control control) {
+                mRobotFace.onControlReceived(control);
+            }
+
+            @Override
+            public void onError(@NonNull Throwable e) {
+                mRobotFace.onControlReceived(new SensorData.Control());
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        });
     }
 
     @Override
     public void onPause() {
         super.onPause();
         //Stop listening to remote messages
-        RemoteControl.get().unregisterRemoteListener(this);
+        final Disposable controlDisposable = this.mControlDisposable;
+        if(controlDisposable != null && !controlDisposable.isDisposed()){
+            controlDisposable.dispose();
+        }
     }
 
 
@@ -95,15 +122,5 @@ public class EfimTelepresenceFaceFragment extends QuickBloxFragment implements R
     void onQBSetup(QBUser user) {
     }
 
-    @Override
-    public void onMessageReceived(Object message) {
-        ((EfimFace) mRobotFace).onControlReceived((SensorData.Control) message);
-    }
-
-    @Override
-    public void onConnectionLost() {
-        //Send stop to face
-        ((EfimFace) mRobotFace).onControlReceived(new SensorData.Control());
-    }
 
 }

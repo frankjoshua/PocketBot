@@ -30,15 +30,13 @@ import com.tesseractmobile.pocketbot.robot.SpeechStateListener;
 
 import java.util.HashMap;
 
-public class MouthView extends TextView implements OnInitListener, OnDataCaptureListener, SpeechStateListener{
+public class MouthView extends android.support.v7.widget.AppCompatTextView implements OnInitListener, OnDataCaptureListener, SpeechStateListener{
 
     final Handler handler = new Handler();
     private final TextToSpeech mTts;
     private boolean isTalkReady;
     private State mState;
     private final Paint mMouthPaint;
-    private SpeechCompleteListener mSpeechCompleteListener;
-
     static final private RectF DEST_RECT = new RectF();
     private HashMap<String, Boolean> mActiveUtterance = new HashMap<String, Boolean>();
 
@@ -231,12 +229,7 @@ public class MouthView extends TextView implements OnInitListener, OnDataCapture
         if(state == State.NOT_TALKING){
             mCurrentBitmap = 0;
             //Let the listener know the the speech is complete
-            final SpeechCompleteListener speechCompleteListener = mSpeechCompleteListener;
-            if(speechCompleteListener != null){
-                speechCompleteListener.onSpeechComplete();
-                //Listeners only get informed once
-                //mSpeechCompleteListener = null;
-            }
+            Robot.get().onSpeechComplete();
         }
         postInvalidate();
     }
@@ -282,10 +275,6 @@ public class MouthView extends TextView implements OnInitListener, OnDataCapture
      */
     public void updateWave(final byte[] waveform) {
         invalidate();
-    }
-
-    public void setOnSpeechCompleteListener(final SpeechCompleteListener speechCompleteListener){
-        this.mSpeechCompleteListener = speechCompleteListener;
     }
 
     @Override

@@ -17,6 +17,8 @@ import com.tesseractmobile.pocketbot.activities.PocketBotSettings;
 
 import java.util.ArrayList;
 
+import io.reactivex.subjects.BehaviorSubject;
+
 /**
  * Created by josh on 12/1/2015.
  */
@@ -33,10 +35,8 @@ public class RemoteControl implements ChildEventListener, DataStore.OnAuthComple
 
     /** the pubnub channel to listen to */
     private String id;
-    /** Listen to control data from Remote */
-    final private ArrayList<RemoteListener> mRemoteListeners = new ArrayList<RemoteListener>();
-    /** Notify of status update from current connected robot */
-    private StatusListener mStatusListener;
+    /** Udated when controls from remote databse are received */
+    final BehaviorSubject<SensorData.Control> mControlSubject = BehaviorSubject.create();
 
     /** Singleton */
     static private RemoteControl instance;
@@ -87,20 +87,8 @@ public class RemoteControl implements ChildEventListener, DataStore.OnAuthComple
         return instance;
     }
 
-    /**
-     * Register to listen for remote control messages
-     * @param remoteListener
-     */
-    public synchronized void registerRemoteListener(final RemoteListener remoteListener){
-        mRemoteListeners.add(remoteListener);
-    }
-
-    /**
-     * Stop listening to remote messages
-     * @param remoteListener
-     */
-    public synchronized void unregisterRemoteListener(final RemoteListener remoteListener){
-        mRemoteListeners.remove(remoteListener);
+    public BehaviorSubject<SensorData.Control> getControlSubject(){
+        return mControlSubject;
     }
 
     /**
@@ -121,22 +109,10 @@ public class RemoteControl implements ChildEventListener, DataStore.OnAuthComple
     }
 
     /**
-     * Call when remote message is received
-     * @param message
-     */
-    private synchronized void onObjectReceived(Object message) {
-        for (RemoteListener remoteListener : mRemoteListeners) {
-            remoteListener.onMessageReceived(message);
-        }
-    }
-
-    /**
      * Call when connection is lost
      */
     private synchronized void onConnectionLost(){
-        for (RemoteListener remoteListener : mRemoteListeners) {
-            remoteListener.onConnectionLost();
-        }
+        mControlSubject.onError(new UnsupportedOperationException("Connection Lost"));
     }
 
     /**
@@ -224,7 +200,7 @@ public class RemoteControl implements ChildEventListener, DataStore.OnAuthComple
 
     @Override
     public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-        onObjectReceived(dataSnapshot.getValue(SensorData.Control.class));
+        mControlSubject.onNext(dataSnapshot.getValue(SensorData.Control.class));
     }
 
     @Override

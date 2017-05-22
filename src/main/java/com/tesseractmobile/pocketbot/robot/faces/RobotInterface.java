@@ -10,6 +10,8 @@ import com.tesseractmobile.pocketbot.robot.SensorData;
 import com.tesseractmobile.pocketbot.robot.SpeechListener;
 import com.tesseractmobile.pocketbot.robot.SpeechStateListener;
 import com.tesseractmobile.pocketbot.robot.VoiceRecognitionService;
+import com.tesseractmobile.pocketbot.robot.model.Face;
+import com.tesseractmobile.pocketbot.robot.model.Speech;
 import com.tesseractmobile.pocketbot.service.VoiceRecognitionListener;
 import com.tesseractmobile.pocketbot.service.GoogleVoiceRecognitionService;
 
@@ -43,14 +45,6 @@ public interface RobotInterface {
     void humanSpotted(int id);
 
     /**
-     * 0.0 to 2.0,  1.0 is center
-     * @param x
-     * @param y
-     * @param z distance in percent 1.0 close 0.0 far
-     */
-    void look(float x, float y, float z);
-
-    /**
      * @return reference to the sensor data
      */
     SensorData getSensorData();
@@ -72,6 +66,12 @@ public interface RobotInterface {
      * @return
      */
     BehaviorSubject<Emotion> getEmotion();
+
+    /**
+     * Face states
+     * @return
+     */
+    BehaviorSubject<Face> getFaceSubject();
 
     /**
      * Set the active robot face
@@ -114,4 +114,16 @@ public interface RobotInterface {
     void setIsNew(boolean isNew);
 
     boolean isNew();
+
+    /**
+     * Informs the robot that has been spotted
+     * x and y = 0.0 to 2.0,  1.0 is center
+     * @param face
+     */
+    void look(Face face);
+
+
+    BehaviorSubject<Speech> getSpeechSubject();
+
+    void onSpeechComplete();
 }

@@ -1,8 +1,9 @@
 package com.tesseractmobile.pocketbot.robot.faces;
 
 import com.tesseractmobile.pocketbot.robot.Emotion;
-import com.tesseractmobile.pocketbot.robot.Robot;
 import com.tesseractmobile.pocketbot.robot.SensorData;
+import com.tesseractmobile.pocketbot.robot.model.Face;
+import com.tesseractmobile.pocketbot.robot.model.Speech;
 
 import io.reactivex.Observer;
 import io.reactivex.annotations.NonNull;
@@ -37,6 +38,48 @@ abstract public class BaseFace implements RobotFace{
 
             }
         });
+        robotInterface.getFaceSubject().subscribe(new Observer<Face>() {
+            @Override
+            public void onSubscribe(@NonNull Disposable d) {
+
+            }
+
+            @Override
+            public void onNext(@NonNull Face face) {
+                look(face);
+            }
+
+            @Override
+            public void onError(@NonNull Throwable e) {
+
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        });
+        robotInterface.getSpeechSubject().subscribe(new Observer<Speech>() {
+            @Override
+            public void onSubscribe(@NonNull Disposable d) {
+
+            }
+
+            @Override
+            public void onNext(@NonNull Speech speech) {
+                say(speech);
+            }
+
+            @Override
+            public void onError(@NonNull Throwable e) {
+
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        });
     }
 
     public void onControlReceived(final SensorData.Control message) {
@@ -46,6 +89,7 @@ abstract public class BaseFace implements RobotFace{
         mRobotInterface.sendSensorData(false);
 
         //Look based on joystick 2
-        look((float) message.joy2.X + 1, (float) message.joy2.Y + 1, 0);
+        final Face face = new Face((float) message.joy2.X + 1, (float) message.joy2.Y + 1, 0);
+        look(face);
     }
 }

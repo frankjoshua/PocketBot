@@ -230,7 +230,7 @@ public class FaceTrackingFragment extends CallbackFragment implements SharedPref
             FaceTrackingFragment.getCenter(xyz, item, PREVIEW_WIDTH, PREVIEW_HEIGHT);
             mOverlay.add(mFaceGraphic);
             mFaceGraphic.updateFace(item);
-            mRobotInterface.look(xyz.x, xyz.y, xyz.z);
+            mRobotInterface.look(new com.tesseractmobile.pocketbot.robot.model.Face(xyz.x, xyz.y, xyz.z));
 
 //            if(mTakingPicture == false) {
 //                mTakingPicture = true;
@@ -279,7 +279,7 @@ public class FaceTrackingFragment extends CallbackFragment implements SharedPref
             super.onMissing(detections);
             //Face missed for a frame or more
             mOverlay.remove(mFaceGraphic);
-            mRobotInterface.look(1.0f, 1.0f, 1.0f);
+            mRobotInterface.look(new com.tesseractmobile.pocketbot.robot.model.Face(1.0f, 1.0f, 1.0f));
             mRobotInterface.humanSpotted(-1);
         }
 

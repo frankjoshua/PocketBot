@@ -11,8 +11,11 @@ import com.google.common.collect.Lists;
 import com.tesseractmobile.pocketbot.R;
 import com.tesseractmobile.pocketbot.robot.Emotion;
 import com.tesseractmobile.pocketbot.robot.RemoteControl;
+import com.tesseractmobile.pocketbot.robot.Robot;
 import com.tesseractmobile.pocketbot.robot.SensorData;
 import com.tesseractmobile.pocketbot.robot.StatusListener;
+import com.tesseractmobile.pocketbot.robot.model.Face;
+import com.tesseractmobile.pocketbot.robot.model.Speech;
 import com.tesseractmobile.pocketbot.views.JoystickView;
 import com.tesseractmobile.pocketbot.views.MouthView;
 
@@ -20,18 +23,15 @@ import org.ros.address.InetAddressFactory;
 import org.ros.android.RosFragmentActivity;
 import org.ros.android.view.visualization.VisualizationView;
 import org.ros.android.view.visualization.layer.CameraControlLayer;
-import org.ros.android.view.visualization.layer.CameraControlListener;
 import org.ros.android.view.visualization.layer.LaserScanLayer;
 import org.ros.android.view.visualization.layer.Layer;
 import org.ros.android.view.visualization.layer.OccupancyGridLayer;
 import org.ros.android.view.visualization.layer.RobotLayer;
 import org.ros.node.NodeConfiguration;
 import org.ros.node.NodeMainExecutor;
-import org.ros.time.NtpTimeProvider;
 
 import java.net.URI;
 import java.text.NumberFormat;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by josh on 10/25/2015.
@@ -63,7 +63,6 @@ public class ControlFace extends BaseFace implements JoystickView.JoystickListen
     private TextView mFaceData;
     private SensorData.Joystick mJoy1 = new SensorData.Joystick();
     private SensorData.Joystick mJoy2 = new SensorData.Joystick();
-    private MouthView.SpeechCompleteListener mSpeechCompleteListener;
 
     public ControlFace(final View view, final RosFragmentActivity rosFragmentActivity){
         numberFormat.setMinimumFractionDigits(2);
@@ -91,9 +90,7 @@ public class ControlFace extends BaseFace implements JoystickView.JoystickListen
         mFaceData.setText(data);
         if(inputText != null){
             mInputTextView.setText(inputText);
-            if(mSpeechCompleteListener != null){
-                mSpeechCompleteListener.onSpeechComplete();
-            }
+            Robot.get().onSpeechComplete();
         }
     }
 
@@ -103,19 +100,14 @@ public class ControlFace extends BaseFace implements JoystickView.JoystickListen
     }
 
     @Override
-    public void look(float x, float y, float z) {
+    public void look(Face face) {
 
     }
 
     @Override
-    public void say(final String text) {
-        inputText = text;
+    public void say(final Speech speech) {
+        inputText = speech.text;
         mHandler.sendEmptyMessage(0);
-    }
-
-    @Override
-    public void setOnSpeechCompleteListener(MouthView.SpeechCompleteListener speechCompleteListener) {
-        mSpeechCompleteListener = speechCompleteListener;
     }
 
     @Override
@@ -224,8 +216,10 @@ public class ControlFace extends BaseFace implements JoystickView.JoystickListen
     @Override
     public void onRemoteSensorUpdate(final SensorData sensorData) {
         //Received sensor data from remote robot
-        say("Heading: " + Integer.toString(sensorData.getSensor().heading) + " Battery " + Integer.toString(sensorData.getSensor().battery) + "%\n"
-        + "JoyX: " + numberFormat.format(sensorData.getControl().joy1.X) + " JoyY: " + numberFormat.format(sensorData.getControl().joy1.Y));
+        final String text = "Heading: " + Integer.toString(sensorData.getSensor().heading) + " Battery " + Integer.toString(sensorData.getSensor().battery) + "%\n"
+                + "JoyX: " + numberFormat.format(sensorData.getControl().joy1.X) + " JoyY: " + numberFormat.format(sensorData.getControl().joy1.Y);
+        final Speech speech = new Speech(text);
+        say(speech);
     }
 
     @Override

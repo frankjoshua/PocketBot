@@ -17,7 +17,6 @@ import com.tesseractmobile.pocketbot.R;
 import com.tesseractmobile.pocketbot.robot.AuthData;
 import com.tesseractmobile.pocketbot.robot.DataStore;
 import com.tesseractmobile.pocketbot.robot.RemoteControl;
-import com.tesseractmobile.pocketbot.robot.RemoteListener;
 import com.tesseractmobile.pocketbot.robot.Robot;
 import com.tesseractmobile.pocketbot.robot.SensorData;
 import com.tesseractmobile.pocketbot.robot.faces.RobotFace;
@@ -26,16 +25,21 @@ import com.tesseractmobile.pocketbot.robot.faces.TelePresenceFace;
 
 import org.webrtc.VideoRenderer;
 
+import io.reactivex.Observer;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.disposables.Disposable;
+
 /**
  * Created by josh on 10/31/2015.
  */
-public class TelepresenceFaceFragment extends QuickBloxFragment implements RemoteListener {
+public class TelepresenceFaceFragment extends QuickBloxFragment{
 
 
     private RobotFace mRobotFace;
     private RTCGLVideoView mRemoteVideoView;
     private TextView mUserId;
     private Handler mHandler = new Handler();
+    private Disposable mControlDisplosable;
 
     @Override
     public RobotFace getRobotFace(RobotInterface robotInterface) {
@@ -85,14 +89,38 @@ public class TelepresenceFaceFragment extends QuickBloxFragment implements Remot
     public void onResume() {
         super.onResume();
         //Listen for remote messages
-        RemoteControl.get().registerRemoteListener(this);
+        RemoteControl.get().getControlSubject().subscribe(new Observer<SensorData.Control>() {
+            @Override
+            public void onSubscribe(@NonNull Disposable d) {
+                mControlDisplosable = d;
+            }
+
+            @Override
+            public void onNext(@NonNull SensorData.Control control) {
+                ((TelePresenceFace) mRobotFace).onControlReceived(control);
+            }
+
+            @Override
+            public void onError(@NonNull Throwable e) {
+                //Send stop to face
+                ((TelePresenceFace) mRobotFace).onControlReceived(new SensorData.Control());
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        });
     }
 
     @Override
     public void onPause() {
         super.onPause();
         //Stop listening for remote messages
-        RemoteControl.get().unregisterRemoteListener(this);
+        final Disposable controlDisposable = mControlDisplosable;
+        if(controlDisposable != null && !controlDisposable.isDisposed()){
+            controlDisposable.dispose();
+        }
     }
 
     @Override
@@ -124,17 +152,6 @@ public class TelepresenceFaceFragment extends QuickBloxFragment implements Remot
         videoTrack.addRenderer(new VideoRenderer(remoteRenderer ?
                 videoView.obtainVideoRenderer(RTCGLVideoView.RendererSurface.MAIN) :
                 videoView.obtainVideoRenderer(RTCGLVideoView.RendererSurface.SECOND)));
-    }
-
-    @Override
-    public void onMessageReceived(Object message) {
-        ((TelePresenceFace) mRobotFace).onControlReceived((SensorData.Control) message);
-    }
-
-    @Override
-    public void onConnectionLost() {
-        //Send stop to face
-        ((TelePresenceFace) mRobotFace).onControlReceived(new SensorData.Control());
     }
 
     @Override

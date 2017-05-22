@@ -1,6 +1,8 @@
 package com.tesseractmobile.pocketbot.robot.faces;
 
 import com.tesseractmobile.pocketbot.robot.Emotion;
+import com.tesseractmobile.pocketbot.robot.model.Face;
+import com.tesseractmobile.pocketbot.robot.model.Speech;
 import com.tesseractmobile.pocketbot.views.MouthView;
 
 /**
@@ -15,19 +17,15 @@ public interface RobotFace {
 
     /**
      * Direction to look in
-     * @param x
-     * @param y
-     * @param z
+     * @param face
      */
-    void look(float x, float y, float z);
+    void look(Face face);
 
     /**
      * Speak the text
      * @param text
      */
-    void say(String text);
-
-    void setOnSpeechCompleteListener(MouthView.SpeechCompleteListener speechCompleteListener);
+    void say(Speech text);
 
     void setRobotInterface(final RobotInterface robotInterface);
 }

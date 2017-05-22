@@ -7,6 +7,8 @@ import android.view.View.OnClickListener;
 
 import com.tesseractmobile.pocketbot.R;
 import com.tesseractmobile.pocketbot.robot.Emotion;
+import com.tesseractmobile.pocketbot.robot.model.Face;
+import com.tesseractmobile.pocketbot.robot.model.Speech;
 import com.tesseractmobile.pocketbot.views.EyeView;
 import com.tesseractmobile.pocketbot.views.MouthView;
 import com.tesseractmobile.pocketbot.views.MouthView.SpeechCompleteListener;
@@ -45,20 +47,9 @@ public class EfimFace extends BaseFace implements RobotFace, OnClickListener{
     }
 
     @Override
-    public void look(float x, float y, float z) {
-        mLeftEye.look(x, y);
-        mRightEye.look(x, y);
-    }
-
-    @Override
-    public void say(final String text) {
-         mTempText = text;
+    public void say(final Speech speech) {
+         mTempText = speech.text;
          mHandler.sendEmptyMessage(0);
-    }
-
-    @Override
-    public void setOnSpeechCompleteListener(SpeechCompleteListener speechCompleteListener) {
-        mouthView.setOnSpeechCompleteListener(speechCompleteListener);
     }
 
     @Override
@@ -126,12 +117,18 @@ public class EfimFace extends BaseFace implements RobotFace, OnClickListener{
                             mLeftEye.squint();
                             mRightEye.squint();
                             mouthView.frown();
-                            say("I don't under stand the emotion " + emotion + ".");
+                            say(new Speech("I don't under stand the emotion " + emotion + "."));
                             break;
                     }
                 }
             });
         }
+    }
+
+    @Override
+    public void look(Face face) {
+        mLeftEye.look(face.x, face.y);
+        mRightEye.look(face.x, face.y);
     }
 
     /**
@@ -149,32 +146,5 @@ public class EfimFace extends BaseFace implements RobotFace, OnClickListener{
         mLeftEye.squintRight();
         mRightEye.squintLeft();
     }
-
-//    public void sendJson(JSONObject jsonObject) {
-//        final SensorData sensorData = mRobotInterface.getSensorData();
-//        try {
-//            //Read in JSON and send to the local robot
-//            final float x = (float) jsonObject.getDouble(ControlFace.JOY1_X);
-//            final float y = (float) jsonObject.getDouble(ControlFace.JOY1_Y);
-//            final float z = (float) jsonObject.getDouble(ControlFace.JOY1_Z);
-//            final boolean a = (boolean) jsonObject.getBoolean(ControlFace.JOY1_A);
-//            final boolean b = (boolean) jsonObject.getBoolean(ControlFace.JOY1_B);
-//            final int heading = (int) jsonObject.getInt(ControlFace.JOY1_HEADING);
-//            //Update joystick 1
-//            sensorData.setJoystick1(x, y, z, a, b, heading);
-//            //Update joystick 2
-//            final float x2 = (float) jsonObject.getDouble(ControlFace.JOY2_X);
-//            final float y2 = (float) jsonObject.getDouble(ControlFace.JOY2_Y);
-//            final float z2 = (float) jsonObject.getDouble(ControlFace.JOY2_Z);
-//            final boolean a2 = (boolean) jsonObject.getBoolean(ControlFace.JOY2_A);
-//            final boolean b2 = (boolean) jsonObject.getBoolean(ControlFace.JOY2_B);
-//            final int heading2 = (int) jsonObject.getInt(ControlFace.JOY2_HEADING);
-//            sensorData.setJoystick2(x2, y2, z2, a2, b2, heading2);
-//            //Send data
-//            mRobotInterface.sendSensorData(false);
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//    }
 
 }

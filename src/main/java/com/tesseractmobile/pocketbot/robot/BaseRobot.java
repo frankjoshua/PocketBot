@@ -9,6 +9,8 @@ import android.util.Log;
 import com.tesseractmobile.pocketbot.activities.SpeechState;
 import com.tesseractmobile.pocketbot.robot.faces.RobotFace;
 import com.tesseractmobile.pocketbot.robot.faces.RobotInterface;
+import com.tesseractmobile.pocketbot.robot.model.Face;
+import com.tesseractmobile.pocketbot.robot.model.Speech;
 import com.tesseractmobile.pocketbot.service.VoiceRecognitionListener;
 import com.tesseractmobile.pocketbot.service.VoiceRecognitionState;
 import com.tesseractmobile.pocketbot.views.MouthView;
@@ -25,7 +27,7 @@ import io.reactivex.subjects.BehaviorSubject;
 /**
  * Created by josh on 11/16/2015.
  */
-abstract public class BaseRobot implements RobotInterface, MouthView.SpeechCompleteListener, VoiceRecognitionListener, BodyConnectionListener {
+abstract public class BaseRobot implements RobotInterface, VoiceRecognitionListener, BodyConnectionListener {
 
     private static final int START_LISTENING = 1;
     private static final int START_LISTENING_AFTER_PROMPT = 2;
@@ -35,8 +37,12 @@ abstract public class BaseRobot implements RobotInterface, MouthView.SpeechCompl
 
     /** Updated when emotion changes */
     private final BehaviorSubject<Emotion> mEmotion = BehaviorSubject.create();
-
+    /** Updated when face changes */
+    private final BehaviorSubject<Face> mFaceSubject = BehaviorSubject.create();
+    @Deprecated
     private RobotFace mRobotFace;
+    private final BehaviorSubject<Speech> mSpeechSubject = BehaviorSubject.create();
+
     private SpeechState mSpeechState = SpeechState.READY;
     private ArrayList<SpeechStateListener> mSpeechStateListeners = new ArrayList<SpeechStateListener>();
     private VoiceRecognitionService mVoiceRecognitionService;
@@ -100,14 +106,25 @@ abstract public class BaseRobot implements RobotInterface, MouthView.SpeechCompl
     }
 
     @Override
+    public BehaviorSubject<Face> getFaceSubject() {
+        return mFaceSubject;
+    }
+
+    @Override
+    public BehaviorSubject<Speech> getSpeechSubject() {
+        return mSpeechSubject;
+    }
+
+    @Override
+    @Deprecated
     public void setRobotFace(RobotFace robotFace) {
         mRobotFace = robotFace;
     }
 
     @Override
-    public void look(float x, float y, float z) {
-        mRobotFace.look(x, y, z);
-        mSensorData.setFace(x, y, z);
+    public void look(final Face face) {
+        mFaceSubject.onNext(face);
+        mSensorData.setFace(face.x, face.y, face.z);
         sendSensorData(false);
     }
 
@@ -163,6 +180,7 @@ abstract public class BaseRobot implements RobotInterface, MouthView.SpeechCompl
     final public boolean say(String text) {
         //Check if handled by onPoccessInput
         if(onProccessInput(text) == false) {
+            mSpeechSubject.onNext(new Speech(text));
             mLastHumanSpoted = SystemClock.uptimeMillis();
 
             if (mSpeechState != SpeechState.READY) {
@@ -170,9 +188,6 @@ abstract public class BaseRobot implements RobotInterface, MouthView.SpeechCompl
                 return false;
             }
             setSpeechState(SpeechState.TALKING);
-
-            mRobotFace.setOnSpeechCompleteListener(this);
-            mRobotFace.say(text);
         }
         return true;
     }
@@ -223,7 +238,6 @@ abstract public class BaseRobot implements RobotInterface, MouthView.SpeechCompl
     private void startListening(final String prompt) {
         //setEmotion(Emotion.SUPRISED);
         if (prompt != null) {
-            mRobotFace.setOnSpeechCompleteListener(this);
             if (say(prompt)) {
                 setSpeechState(SpeechState.WAITING_TO_LISTEN);
             }
