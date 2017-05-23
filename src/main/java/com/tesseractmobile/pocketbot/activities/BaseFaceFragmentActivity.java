@@ -16,7 +16,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -46,7 +45,6 @@ import com.google.code.chatterbotapi.ChatterBotSession;
 import com.google.code.chatterbotapi.ChatterBotThought;
 import com.google.code.chatterbotapi.ChatterBotType;
 import com.tesseractmobile.pocketbot.R;
-import com.tesseractmobile.pocketbot.activities.fragments.ApiAiKeyDialog;
 import com.tesseractmobile.pocketbot.activities.fragments.CallbackFragment;
 import com.tesseractmobile.pocketbot.activities.fragments.EmotionsFragment;
 import com.tesseractmobile.pocketbot.activities.fragments.FaceTrackingFragment;
@@ -66,7 +64,8 @@ import com.tesseractmobile.pocketbot.robot.Robot;
 import com.tesseractmobile.pocketbot.robot.RobotInfo;
 import com.tesseractmobile.pocketbot.robot.SensorControler;
 import com.tesseractmobile.pocketbot.robot.SensorData;
-import com.tesseractmobile.pocketbot.robot.SpeechListener;
+import com.tesseractmobile.pocketbot.robot.model.Speech;
+import com.tesseractmobile.pocketbot.robot.model.TextInput;
 
 import org.ros.android.MasterChooser;
 import org.ros.android.RosFragmentActivity;
@@ -75,8 +74,10 @@ import org.ros.node.NodeMainExecutor;
 import java.net.URI;
 
 import io.fabric.sdk.android.Fabric;
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
 
-public class BaseFaceFragmentActivity extends RosFragmentActivity implements SharedPreferences.OnSharedPreferenceChangeListener, View.OnClickListener, SpeechListener, KeepAliveThread.KeepAliveListener, KeepAliveThread.InternetAliveListener, NavigationView.OnNavigationItemSelectedListener {
+public class BaseFaceFragmentActivity extends RosFragmentActivity implements SharedPreferences.OnSharedPreferenceChangeListener, View.OnClickListener, KeepAliveThread.KeepAliveListener, KeepAliveThread.InternetAliveListener, NavigationView.OnNavigationItemSelectedListener {
 
     private static final String TAG = BaseFaceFragmentActivity.class.getSimpleName();
 
@@ -103,6 +104,8 @@ public class BaseFaceFragmentActivity extends RosFragmentActivity implements Sha
     /** For finding local network devices */
     private GoogleNearbyConnectionController mGoogleNearbyConnectionController;
     private DrawerLayout mDrawerLayout;
+    private Disposable mSpeechInDisposable;
+    private Disposable mSpeechOutDisposable;
 
     public BaseFaceFragmentActivity(){
         super("PocketBot", "PocketBot");
@@ -315,7 +318,49 @@ public class BaseFaceFragmentActivity extends RosFragmentActivity implements Sha
         //Listen for preference changes
         PocketBotSettings.registerOnSharedPreferenceChangeListener(this, this);
         //Listen for speech to update preview
-        Robot.get().registerSpeechListener(this);
+        Robot.get().getTextInputSubject().subscribe(new Observer<TextInput>() {
+            @Override
+            public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
+                mSpeechInDisposable = d;
+            }
+
+            @Override
+            public void onNext(@io.reactivex.annotations.NonNull TextInput textInput) {
+                addTextToList(textInput.text, false);
+            }
+
+            @Override
+            public void onError(@io.reactivex.annotations.NonNull Throwable e) {
+
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        });
+        Robot.get().getSpeechSubject().subscribe(new Observer<Speech>() {
+            @Override
+            public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
+                mSpeechOutDisposable = d;
+            }
+
+            @Override
+            public void onNext(@io.reactivex.annotations.NonNull Speech speech) {
+                addTextToList(speech.text, true);
+            }
+
+            @Override
+            public void onError(@io.reactivex.annotations.NonNull Throwable e) {
+
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        });
+
         //Keep alive thread
         if(PocketBotSettings.isKeepAlive(this)) {
             mKeepAliveThread = new KeepAliveThread(this, this);
@@ -355,7 +400,14 @@ public class BaseFaceFragmentActivity extends RosFragmentActivity implements Sha
         //Listen for preference changes
         PocketBotSettings.unregisterOnSharedPreferenceChangeListener(this, this);
         //Stop listening for speech to update preview
-        Robot.get().unregisterSpeechListener(this);
+        final Disposable inDisposeable = mSpeechInDisposable;
+        if(inDisposeable != null && !inDisposeable.isDisposed()){
+            inDisposeable.dispose();
+        }
+        final Disposable outDisposeable = mSpeechOutDisposable;
+        if(outDisposeable != null && !outDisposeable.isDisposed()){
+            outDisposeable.dispose();
+        }
         //Keep alive thread
         if(PocketBotSettings.isKeepAlive(this)) {
             mKeepAliveThread.stopThread();
@@ -382,18 +434,6 @@ public class BaseFaceFragmentActivity extends RosFragmentActivity implements Sha
     final public void setEmotion(final Emotion emotion) {
         Robot.get().setEmotion(emotion);
     }
-
-
-    @Override
-    public void onSpeechIn(String speech) {
-        addTextToList(speech, false);
-    }
-
-    @Override
-    public void onSpeechOut(String speech) {
-        addTextToList(speech, true);
-    }
-
 
     private void addTextToList(final String text, final boolean isPocketBot) {
 
@@ -425,10 +465,12 @@ public class BaseFaceFragmentActivity extends RosFragmentActivity implements Sha
             ft.add(R.id.faceView, faceFragment, FRAGMENT_FACE);
         }
 
+
         faceFragment.setOnCompleteListener(new CallbackFragment.OnCompleteListener() {
             @Override
             public void onComplete() {
-                Robot.get().setRobotFace(faceFragment.getRobotFace(Robot.get()));
+                //TODO: This needs to be refactored the wording is misleading
+                faceFragment.getRobotFace(Robot.get());
             }
         });
         if(isUseFaceTracking){

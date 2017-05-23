@@ -1,7 +1,5 @@
 package com.tesseractmobile.pocketbot.activities;
 
-import android.os.SystemClock;
-
 import java.net.URI;
 import java.util.UUID;
 
@@ -9,7 +7,8 @@ import com.tesseractmobile.pocketbot.robot.BaseRobot;
 import com.tesseractmobile.pocketbot.robot.Emotion;
 import com.tesseractmobile.pocketbot.robot.Robot;
 import com.tesseractmobile.pocketbot.robot.SensorData;
-import com.tesseractmobile.pocketbot.robot.SpeechListener;
+import com.tesseractmobile.pocketbot.robot.model.Speech;
+import com.tesseractmobile.pocketbot.robot.model.TextInput;
 
 import org.ros.address.InetAddressFactory;
 import org.ros.message.Time;
@@ -25,7 +24,6 @@ import geometry_msgs.Twist;
 import io.reactivex.Observer;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 import sensor_msgs.Imu;
 import std_msgs.String;
 
@@ -101,19 +99,51 @@ public class PocketBotNode implements NodeMain {
         final Publisher<String> speechPublisher = connectedNode.newPublisher("/" + NODE_PREFIX + "/speech", String._TYPE);
         final String string = speechPublisher.newMessage();
         final String aiString = aiPublisher.newMessage();
-        Robot.get().registerSpeechListener(new SpeechListener() {
+        Robot.get().getTextInputSubject().subscribe(new Observer<TextInput>() {
             @Override
-            public void onSpeechIn(java.lang.String speech) {
-                string.setData(speech);
+            public void onSubscribe(@NonNull Disposable d) {
+
+            }
+
+            @Override
+            public void onNext(@NonNull TextInput textInput) {
+                string.setData(textInput.text);
                 speechPublisher.publish(string);
             }
 
             @Override
-            public void onSpeechOut(java.lang.String speech) {
-                aiString.setData(speech);
-                aiPublisher.publish(aiString);
+            public void onError(@NonNull Throwable e) {
+
+            }
+
+            @Override
+            public void onComplete() {
+
             }
         });
+        Robot.get().getSpeechSubject().subscribe(new Observer<Speech>() {
+            @Override
+            public void onSubscribe(@NonNull Disposable d) {
+
+            }
+
+            @Override
+            public void onNext(@NonNull Speech speech) {
+                aiString.setData(speech.text);
+                aiPublisher.publish(aiString);
+            }
+
+            @Override
+            public void onError(@NonNull Throwable e) {
+
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        });
+
     }
 
     private void initImuPublisher(final ConnectedNode connectedNode) {

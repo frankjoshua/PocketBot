@@ -6,22 +6,16 @@ import android.os.Message;
 import android.os.SystemClock;
 import android.util.Log;
 
-import com.tesseractmobile.pocketbot.activities.SpeechState;
+import com.tesseractmobile.pocketbot.robot.model.SpeechState;
 import com.tesseractmobile.pocketbot.robot.faces.RobotFace;
 import com.tesseractmobile.pocketbot.robot.faces.RobotInterface;
 import com.tesseractmobile.pocketbot.robot.model.Face;
 import com.tesseractmobile.pocketbot.robot.model.Speech;
 import com.tesseractmobile.pocketbot.service.VoiceRecognitionListener;
 import com.tesseractmobile.pocketbot.service.VoiceRecognitionState;
-import com.tesseractmobile.pocketbot.views.MouthView;
 
 import java.util.ArrayList;
 
-import de.measite.minidns.record.A;
-import io.reactivex.Observer;
-import io.reactivex.annotations.NonNull;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 import io.reactivex.subjects.BehaviorSubject;
 
 /**
@@ -39,12 +33,12 @@ abstract public class BaseRobot implements RobotInterface, VoiceRecognitionListe
     private final BehaviorSubject<Emotion> mEmotion = BehaviorSubject.create();
     /** Updated when face changes */
     private final BehaviorSubject<Face> mFaceSubject = BehaviorSubject.create();
-    @Deprecated
-    private RobotFace mRobotFace;
+    /** Updates with outgoing speech */
     private final BehaviorSubject<Speech> mSpeechSubject = BehaviorSubject.create();
-
+    /** Update when the speech state changes */
+    private final BehaviorSubject<SpeechState> mSpeechStateSubject = BehaviorSubject.create();
     private SpeechState mSpeechState = SpeechState.READY;
-    private ArrayList<SpeechStateListener> mSpeechStateListeners = new ArrayList<SpeechStateListener>();
+
     private VoiceRecognitionService mVoiceRecognitionService;
     final private SensorData mSensorData = new SensorData();
     final private DataStore mDataStore;
@@ -116,12 +110,6 @@ abstract public class BaseRobot implements RobotInterface, VoiceRecognitionListe
     }
 
     @Override
-    @Deprecated
-    public void setRobotFace(RobotFace robotFace) {
-        mRobotFace = robotFace;
-    }
-
-    @Override
     public void look(final Face face) {
         mFaceSubject.onNext(face);
         mSensorData.setFace(face.x, face.y, face.z);
@@ -178,17 +166,14 @@ abstract public class BaseRobot implements RobotInterface, VoiceRecognitionListe
 
     @Override
     final public boolean say(String text) {
-        //Check if handled by onPoccessInput
-        if(onProccessInput(text) == false) {
-            mSpeechSubject.onNext(new Speech(text));
-            mLastHumanSpoted = SystemClock.uptimeMillis();
+        mSpeechSubject.onNext(new Speech(text));
+        mLastHumanSpoted = SystemClock.uptimeMillis();
 
-            if (mSpeechState != SpeechState.READY) {
-                //Log.d(TAG, "Could not speak \'" + text + "\', state is " + mSpeechState);
-                return false;
-            }
-            setSpeechState(SpeechState.TALKING);
+        if (mSpeechState != SpeechState.READY) {
+            //Log.d(TAG, "Could not speak \'" + text + "\', state is " + mSpeechState);
+            return false;
         }
+        setSpeechState(SpeechState.TALKING);
         return true;
     }
 
@@ -344,29 +329,14 @@ abstract public class BaseRobot implements RobotInterface, VoiceRecognitionListe
         mVoiceRecognitionService = voiceRecognitionService;
     }
 
-    private synchronized void setSpeechState(SpeechState mSpeechState) {
-        this.mSpeechState = mSpeechState;
-        for(SpeechStateListener speechStateListener : mSpeechStateListeners){
-            speechStateListener.onSpeechStateChange(mSpeechState);
-        }
+    private synchronized void setSpeechState(SpeechState speechState) {
+        this.mSpeechState = speechState;
+        mSpeechStateSubject.onNext(speechState);
     }
 
-    /**
-     * Listen for speech state changes
-     * @param speechStateListener
-     */
     @Override
-    public synchronized void registerSpeechChangeListener(final SpeechStateListener speechStateListener){
-        mSpeechStateListeners.add(speechStateListener);
-    }
-
-    /**
-     * Stop listening for speech state changes
-     * @param speechStateListener
-     */
-    @Override
-    public synchronized void unregisterSpeechChangeListener(final SpeechStateListener speechStateListener){
-        mSpeechStateListeners.remove(speechStateListener);
+    public BehaviorSubject<SpeechState> getSpeechStateSubject() {
+        return mSpeechStateSubject;
     }
 
     @Override

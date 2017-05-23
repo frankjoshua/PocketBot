@@ -21,16 +21,18 @@ import android.speech.tts.UtteranceProgressListener;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.Gravity;
-import android.widget.TextView;
 
 import com.tesseractmobile.pocketbot.R;
-import com.tesseractmobile.pocketbot.activities.SpeechState;
+import com.tesseractmobile.pocketbot.robot.model.SpeechState;
 import com.tesseractmobile.pocketbot.robot.Robot;
-import com.tesseractmobile.pocketbot.robot.SpeechStateListener;
 
 import java.util.HashMap;
 
-public class MouthView extends android.support.v7.widget.AppCompatTextView implements OnInitListener, OnDataCaptureListener, SpeechStateListener{
+import io.reactivex.Observer;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.disposables.Disposable;
+
+public class MouthView extends android.support.v7.widget.AppCompatTextView implements OnInitListener, OnDataCaptureListener{
 
     final Handler handler = new Handler();
     private final TextToSpeech mTts;
@@ -113,7 +115,32 @@ public class MouthView extends android.support.v7.widget.AppCompatTextView imple
         mMicrophonePaint.setAlpha(100);
 
         //Listen for speech state changes
-        Robot.get().registerSpeechChangeListener(this);
+        Robot.get().getSpeechStateSubject().subscribe(new Observer<SpeechState>() {
+            @Override
+            public void onSubscribe(@NonNull Disposable d) {
+
+            }
+
+            @Override
+            public void onNext(@NonNull SpeechState speechState) {
+                if(speechState == SpeechState.LISTENING){
+                    mListening = true;
+                } else {
+                    mListening = false;
+                }
+                postInvalidate();
+            }
+
+            @Override
+            public void onError(@NonNull Throwable e) {
+
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        });
     }
 
     
@@ -247,16 +274,6 @@ public class MouthView extends android.support.v7.widget.AppCompatTextView imple
     public void nuetral(){
         mMouthBitmaps[0] = mMouthStaticBitmaps[0];
         invalidate();
-    }
-
-    @Override
-    public void onSpeechStateChange(SpeechState speechState) {
-        if(speechState == SpeechState.LISTENING){
-            mListening = true;
-        } else {
-            mListening = false;
-        }
-        postInvalidate();
     }
 
     private enum State {

@@ -83,10 +83,14 @@ abstract public class BaseFace implements RobotFace{
     }
 
     public void onControlReceived(final SensorData.Control message) {
-        final SensorData sensorData = mRobotInterface.getSensorData();
+        RobotInterface robotInterface = this.mRobotInterface;
+        if(robotInterface == null){
+            return;
+        }
+        final SensorData sensorData = robotInterface.getSensorData();
         sensorData.setControl(message);
         //Send data
-        mRobotInterface.sendSensorData(false);
+        robotInterface.sendSensorData(false);
 
         //Look based on joystick 2
         final Face face = new Face((float) message.joy2.X + 1, (float) message.joy2.Y + 1, 0);

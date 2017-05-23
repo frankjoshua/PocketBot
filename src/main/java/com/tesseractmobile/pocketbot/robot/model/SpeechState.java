@@ -1,4 +1,4 @@
-package com.tesseractmobile.pocketbot.activities;
+package com.tesseractmobile.pocketbot.robot.model;
 
 /**
  * Created by josh on 9/6/2015.

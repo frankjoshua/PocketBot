@@ -7,13 +7,12 @@ import com.tesseractmobile.pocketbot.robot.BodyConnectionListener;
 import com.tesseractmobile.pocketbot.robot.DataStore;
 import com.tesseractmobile.pocketbot.robot.Emotion;
 import com.tesseractmobile.pocketbot.robot.SensorData;
-import com.tesseractmobile.pocketbot.robot.SpeechListener;
-import com.tesseractmobile.pocketbot.robot.SpeechStateListener;
 import com.tesseractmobile.pocketbot.robot.VoiceRecognitionService;
 import com.tesseractmobile.pocketbot.robot.model.Face;
 import com.tesseractmobile.pocketbot.robot.model.Speech;
+import com.tesseractmobile.pocketbot.robot.model.SpeechState;
+import com.tesseractmobile.pocketbot.robot.model.TextInput;
 import com.tesseractmobile.pocketbot.service.VoiceRecognitionListener;
-import com.tesseractmobile.pocketbot.service.GoogleVoiceRecognitionService;
 
 import io.reactivex.subjects.BehaviorSubject;
 
@@ -74,10 +73,16 @@ public interface RobotInterface {
     BehaviorSubject<Face> getFaceSubject();
 
     /**
-     * Set the active robot face
-     * @param robotFace
+     * TextInput states
+     * @return
      */
-    void setRobotFace(final RobotFace robotFace);
+    BehaviorSubject<TextInput> getTextInputSubject();
+
+    /**
+     * SpeechState states
+     * @return
+     */
+    BehaviorSubject<SpeechState> getSpeechStateSubject();
 
     VoiceRecognitionListener getVoiceRecognitionListener();
 
@@ -88,14 +93,6 @@ public interface RobotInterface {
     BodyConnectionListener getBodyConnectionListener();
 
     void setVoiceRecognitionService(VoiceRecognitionService voiceRecognitionService);
-
-    void registerSpeechChangeListener(SpeechStateListener speechStateListener);
-
-    void unregisterSpeechChangeListener(SpeechStateListener speechStateListener);
-
-    void registerSpeechListener(final SpeechListener speechListener);
-
-    void unregisterSpeechListener(final SpeechListener speechListener);
 
     void registerSensorListener(final BaseRobot.SensorListener sensorListener);
 

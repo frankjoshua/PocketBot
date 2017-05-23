@@ -1,12 +1,18 @@
 package com.tesseractmobile.pocketbot.robot;
 
+import com.tesseractmobile.pocketbot.robot.model.TextInput;
+
+import io.reactivex.Observer;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.subjects.BehaviorSubject;
+
 /**
  * Created by josh on 11/16/2015.
  */
 abstract public class AIRobot extends BaseRobot {
-    private AI mAI;
 
-    private SpeechListener mSpeechListener;
+    private BehaviorSubject<TextInput> mTextInputSubject = BehaviorSubject.create();
 
     public AIRobot(final DataStore dataStore) {
         super(dataStore);
@@ -17,36 +23,39 @@ abstract public class AIRobot extends BaseRobot {
      * @param ai
      */
     public void setAI(final AI ai){
-        mAI = ai;
+        mTextInputSubject.subscribe(new Observer<TextInput>() {
+           @Override
+           public void onSubscribe(@NonNull Disposable d) {
+
+           }
+
+           @Override
+           public void onNext(@NonNull TextInput textInput) {
+                ai.input(textInput.text, null);
+           }
+
+           @Override
+           public void onError(@NonNull Throwable e) {
+
+           }
+
+           @Override
+           public void onComplete() {
+
+           }
+       });
     }
 
-    @Override
-    public boolean onProccessInput(final String text) {
-        //Report to the SpeechListener
-        if(mSpeechListener != null){
-            mSpeechListener.onSpeechOut(text);
-        }
-        //Not handled completely
-        return false;
-    }
 
     @Override
     public void onTextInput(final String text) {
-        mAI.input(text, null);
         //Report to the SpeechListener
-        if(mSpeechListener != null){
-            mSpeechListener.onSpeechIn(text);
-        }
+        mTextInputSubject.onNext(new TextInput(text));
     }
 
     @Override
-    public void registerSpeechListener(final SpeechListener speechListener){
-        mSpeechListener = speechListener;
-    }
-
-    @Override
-    public void unregisterSpeechListener(final SpeechListener speechListener){
-        mSpeechListener = null;
+    public BehaviorSubject<TextInput> getTextInputSubject() {
+        return mTextInputSubject;
     }
 
 }
