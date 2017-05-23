@@ -33,9 +33,9 @@ abstract public class BaseRobot implements RobotInterface, VoiceRecognitionListe
     private final BehaviorSubject<Emotion> mEmotion = BehaviorSubject.create();
     /** Updated when face changes */
     private final BehaviorSubject<Face> mFaceSubject = BehaviorSubject.create();
-    /** Updates with outgoing speech */
+    /** Updated when robot wants to speak */
     private final BehaviorSubject<Speech> mSpeechSubject = BehaviorSubject.create();
-    /** Update when the speech state changes */
+    /** Updated when Speech state changes */
     private final BehaviorSubject<SpeechState> mSpeechStateSubject = BehaviorSubject.create();
     private SpeechState mSpeechState = SpeechState.READY;
 
@@ -107,6 +107,11 @@ abstract public class BaseRobot implements RobotInterface, VoiceRecognitionListe
     @Override
     public BehaviorSubject<Speech> getSpeechSubject() {
         return mSpeechSubject;
+    }
+
+    @Override
+    public BehaviorSubject<SpeechState> getSpeechStateSubject() {
+        return mSpeechStateSubject;
     }
 
     @Override
@@ -332,11 +337,6 @@ abstract public class BaseRobot implements RobotInterface, VoiceRecognitionListe
     private synchronized void setSpeechState(SpeechState speechState) {
         this.mSpeechState = speechState;
         mSpeechStateSubject.onNext(speechState);
-    }
-
-    @Override
-    public BehaviorSubject<SpeechState> getSpeechStateSubject() {
-        return mSpeechStateSubject;
     }
 
     @Override

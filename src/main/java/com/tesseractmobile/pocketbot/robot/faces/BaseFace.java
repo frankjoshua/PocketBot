@@ -1,6 +1,7 @@
 package com.tesseractmobile.pocketbot.robot.faces;
 
 import com.tesseractmobile.pocketbot.robot.Emotion;
+import com.tesseractmobile.pocketbot.robot.Robot;
 import com.tesseractmobile.pocketbot.robot.SensorData;
 import com.tesseractmobile.pocketbot.robot.model.Face;
 import com.tesseractmobile.pocketbot.robot.model.Speech;
@@ -15,6 +16,7 @@ import io.reactivex.disposables.Disposable;
 abstract public class BaseFace implements RobotFace{
     protected RobotInterface mRobotInterface;
 
+    @Override
     final public void setRobotInterface(final RobotInterface robotInterface){
         this.mRobotInterface = robotInterface;
         robotInterface.getEmotion().subscribe(new Observer<Emotion>() {

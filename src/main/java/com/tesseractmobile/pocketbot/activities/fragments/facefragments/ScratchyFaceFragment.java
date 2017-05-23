@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.tesseractmobile.pocketbot.R;
+import com.tesseractmobile.pocketbot.robot.Robot;
 import com.tesseractmobile.pocketbot.robot.faces.EfimFace;
 
 /**
@@ -15,7 +16,7 @@ public class ScratchyFaceFragment extends EfimFaceFragment {
     @Override
     protected View createView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.scratchy_face, null);
-        setFace(new EfimFace(view));
+        setFace(new EfimFace(view, Robot.get()));
         return view;
     }
 

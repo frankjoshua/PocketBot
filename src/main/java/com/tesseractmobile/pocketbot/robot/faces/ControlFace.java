@@ -64,7 +64,8 @@ public class ControlFace extends BaseFace implements JoystickView.JoystickListen
     private SensorData.Joystick mJoy1 = new SensorData.Joystick();
     private SensorData.Joystick mJoy2 = new SensorData.Joystick();
 
-    public ControlFace(final View view, final RosFragmentActivity rosFragmentActivity){
+    public ControlFace(final View view, final RosFragmentActivity rosFragmentActivity, final RobotInterface robotInterface){
+        setRobotInterface(robotInterface);
         numberFormat.setMinimumFractionDigits(2);
         mFaceData = (TextView) view.findViewById(R.id.tvFaceData);
         //Setup Joysticks
@@ -90,7 +91,7 @@ public class ControlFace extends BaseFace implements JoystickView.JoystickListen
         mFaceData.setText(data);
         if(inputText != null){
             mInputTextView.setText(inputText);
-            Robot.get().onSpeechComplete();
+            mRobotInterface.onSpeechComplete();
         }
     }
 

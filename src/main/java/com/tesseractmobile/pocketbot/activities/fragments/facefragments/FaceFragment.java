@@ -9,8 +9,6 @@ import com.tesseractmobile.pocketbot.robot.faces.RobotInterface;
  */
 abstract public class FaceFragment extends CallbackFragment {
 
-    abstract public RobotFace getRobotFace(final RobotInterface robotInterface);
-
     /**
      * True if using face tracing
      * @return

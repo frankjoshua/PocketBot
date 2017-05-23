@@ -20,6 +20,7 @@ import com.tesseractmobile.pocketbot.R;
 import com.tesseractmobile.pocketbot.activities.PocketBotSettings;
 import com.tesseractmobile.pocketbot.activities.fragments.RobotSelectionDialog;
 import com.tesseractmobile.pocketbot.robot.Constants;
+import com.tesseractmobile.pocketbot.robot.Robot;
 import com.tesseractmobile.pocketbot.robot.RobotInfo;
 import com.tesseractmobile.pocketbot.robot.faces.ControlFace;
 import com.tesseractmobile.pocketbot.robot.faces.RobotFace;
@@ -48,12 +49,6 @@ public class ControlFaceFragment extends QuickBloxFragment implements View.OnCli
     private Handler mHandler = new Handler();
 
     @Override
-    public RobotFace getRobotFace(RobotInterface robotInterface) {
-        mRobotFace.setRobotInterface(robotInterface);
-        return mRobotFace;
-    }
-
-    @Override
     public boolean isUseFaceTracking() {
         return false;
     }
@@ -65,7 +60,7 @@ public class ControlFaceFragment extends QuickBloxFragment implements View.OnCli
         mConnectButton.setOnClickListener(this);
         mRemoteVideoView = (RTCGLVideoView) view.findViewById(R.id.remoteVideoView);
         mVisualizationView = (VisualizationView) view.findViewById(R.id.visualization);
-        mRobotFace = new ControlFace(view, (RosFragmentActivity) getActivity());
+        mRobotFace = new ControlFace(view, (RosFragmentActivity) getActivity(), Robot.get());
         return view;
     }
 

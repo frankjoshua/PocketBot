@@ -53,6 +53,7 @@ public class MouthView extends android.support.v7.widget.AppCompatTextView imple
     private int mMouthDx = 100;
     private int mMouthDy = 100;
     private boolean mListening = false;
+    private Disposable mSpeechStateDisposable;
 
     public MouthView(final Context context, final AttributeSet attrs) {
         super(context, attrs);
@@ -118,7 +119,7 @@ public class MouthView extends android.support.v7.widget.AppCompatTextView imple
         Robot.get().getSpeechStateSubject().subscribe(new Observer<SpeechState>() {
             @Override
             public void onSubscribe(@NonNull Disposable d) {
-
+                mSpeechStateDisposable = d;
             }
 
             @Override
@@ -238,6 +239,10 @@ public class MouthView extends android.support.v7.widget.AppCompatTextView imple
     protected void onDetachedFromWindow() {
         mTts.stop();
         mTts.shutdown();
+        final Disposable disposable = mSpeechStateDisposable;
+        if(disposable != null && !disposable.isDisposed()){
+            disposable.dispose();
+        }
         super.onDetachedFromWindow();
     }
 
@@ -299,9 +304,4 @@ public class MouthView extends android.support.v7.widget.AppCompatTextView imple
         updateWave(fft);
     }
 
-
-
-    public interface SpeechCompleteListener {
-        public void onSpeechComplete();
-    }
 }

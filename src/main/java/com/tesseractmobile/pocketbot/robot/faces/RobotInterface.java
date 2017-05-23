@@ -84,6 +84,7 @@ public interface RobotInterface {
      */
     BehaviorSubject<SpeechState> getSpeechStateSubject();
 
+
     VoiceRecognitionListener getVoiceRecognitionListener();
 
     void setSensorDelay(int delay);

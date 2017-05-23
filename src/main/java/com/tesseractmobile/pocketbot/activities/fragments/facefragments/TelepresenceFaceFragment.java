@@ -42,12 +42,6 @@ public class TelepresenceFaceFragment extends QuickBloxFragment{
     private Disposable mControlDisplosable;
 
     @Override
-    public RobotFace getRobotFace(RobotInterface robotInterface) {
-        mRobotFace.setRobotInterface(robotInterface);
-        return mRobotFace;
-    }
-
-    @Override
     public boolean isUseFaceTracking() {
         return false;
     }
