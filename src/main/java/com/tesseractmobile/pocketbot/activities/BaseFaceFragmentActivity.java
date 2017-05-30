@@ -57,6 +57,7 @@ import com.tesseractmobile.pocketbot.activities.fragments.facefragments.FaceList
 import com.tesseractmobile.pocketbot.activities.wizard.WizardActivity;
 import com.tesseractmobile.pocketbot.robot.AuthData;
 import com.tesseractmobile.pocketbot.robot.DataStore;
+import com.tesseractmobile.pocketbot.robot.Eliza;
 import com.tesseractmobile.pocketbot.robot.Emotion;
 import com.tesseractmobile.pocketbot.robot.GoogleNearbyConnectionController;
 import com.tesseractmobile.pocketbot.robot.GoogleSignInController;
@@ -106,6 +107,7 @@ public class BaseFaceFragmentActivity extends RosFragmentActivity implements Sha
     private DrawerLayout mDrawerLayout;
     private Disposable mSpeechInDisposable;
     private Disposable mSpeechOutDisposable;
+    final private Eliza eliza = new Eliza();
 
     public BaseFaceFragmentActivity(){
         super("PocketBot", "PocketBot");
@@ -444,7 +446,8 @@ public class BaseFaceFragmentActivity extends RosFragmentActivity implements Sha
     }
 
     protected void doTextInput(String input) {
-        new BotTask().execute(input);
+        Robot.get().listen((eliza.elzTalk(input)));
+        //new BotTask().execute(input);
     }
 
 
