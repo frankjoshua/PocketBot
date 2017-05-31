@@ -319,6 +319,15 @@ public class PocketBotSettings {
         return getSharedPrefs(context).edit().putInt(KEY_STARTING_ACTIVITY_ID, startingActivityId).commit();
     }
 
+    /**
+     * Sets a setting by key
+     * @param key
+     * @param value
+     */
+    public static void setBooleanSetting(final Context context, final String key, final boolean value) {
+        getSharedPrefs(context).edit().putBoolean(key, value).apply();
+    }
+
     public static Object getObject(final SharedPreferences sharedPreferences, final String key) {
         if(key.equals(PocketBotSettings.KEY_SELECTED_FACE)){
             return sharedPreferences.getInt(key, 0);
@@ -362,5 +371,4 @@ public class PocketBotSettings {
             throw new UnsupportedOperationException("Unknown key: " + key);
         }
     }
-
 }

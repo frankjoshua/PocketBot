@@ -56,9 +56,13 @@ public class AiFragmentActivity extends BaseFaceFragmentActivity implements AI {
         } else if(action.equals(CommandContract.ACTION_EMOTION)){
             emotion(result);
         } else if (action.equals(CommandContract.ACTION_SETTINGS)){
-            final String previewSetting = result.getStringParameter(CommandContract.PARAM_PREVIEW, "false");
-            final boolean shouldPreview = previewSetting.equalsIgnoreCase("true");
-            PocketBotSettings.setShowPreview(this, shouldPreview);
+            //This should be the setting key
+            final String key = result.getStringParameter(CommandContract.PARAM_SETTING, "null");
+            //If a key was found change the setting
+            if( ! "null".equals(key)) {
+                final boolean value = result.getStringParameter(CommandContract.PARAM_BOOLEAN, "false").equalsIgnoreCase("true");
+                PocketBotSettings.setBooleanSetting(this, key, value);
+            }
         } else if (action.equals(CommandContract.ACTION_LAUNCH)){
             //Launch an app
             final String packageName = result.getStringParameter(CommandContract.PARAM_PACKAGE);
@@ -84,22 +88,26 @@ public class AiFragmentActivity extends BaseFaceFragmentActivity implements AI {
     }
 
     private void emotion(Result result) {
-        final String emotion = result.getStringParameter(CommandContract.PARAM_EMOTION);
+        try {
+            final String emotion = result.getStringParameter(CommandContract.PARAM_EMOTION);
 
-        if(emotion.equals(CommandContract.EMOTION_ANGER)){
-            setEmotion(Emotion.ANGER);
-        } else if(emotion.equals(CommandContract.EMOTION_JOY)){
-            setEmotion(Emotion.JOY);
-        } else if(emotion.equals(CommandContract.EMOTION_ACCEPTED)){
-            setEmotion(Emotion.ACCEPTED);
-        } else if(emotion.equals(CommandContract.EMOTION_AWARE)){
-            setEmotion(Emotion.AWARE);
-        } else if(emotion.equals(CommandContract.EMOTION_SURPRISED)){
-            setEmotion(Emotion.SUPRISED);
-        } else if(emotion.equals(CommandContract.EMOTION_FEAR)){
-            setEmotion(Emotion.FEAR);
-        } else {
-            Robot.get().say("I had a new emotion... I don't understand, " + emotion);
+            if (emotion.equals(CommandContract.EMOTION_ANGER)) {
+                setEmotion(Emotion.ANGER);
+            } else if (emotion.equals(CommandContract.EMOTION_JOY)) {
+                setEmotion(Emotion.JOY);
+            } else if (emotion.equals(CommandContract.EMOTION_ACCEPTED)) {
+                setEmotion(Emotion.ACCEPTED);
+            } else if (emotion.equals(CommandContract.EMOTION_AWARE)) {
+                setEmotion(Emotion.AWARE);
+            } else if (emotion.equals(CommandContract.EMOTION_SURPRISED)) {
+                setEmotion(Emotion.SURPRISED);
+            } else if (emotion.equals(CommandContract.EMOTION_FEAR)) {
+                setEmotion(Emotion.FEAR);
+            } else {
+                Robot.get().say("I had a new emotion... I don't understand, " + emotion);
+            }
+        } catch (Exception e){
+            //Probaly a JSON error
         }
     }
 

@@ -90,7 +90,7 @@ public class EfimFace extends BaseFace implements RobotFace, OnClickListener{
                             mRightEye.squint();
                             mouthView.smile();
                             break;
-                        case SUPRISED:
+                        case SURPRISED:
                             mLeftEye.open();
                             mRightEye.open();
                             mLeftEye.blink();

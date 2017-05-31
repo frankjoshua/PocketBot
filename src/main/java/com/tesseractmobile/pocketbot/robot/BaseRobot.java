@@ -226,7 +226,7 @@ abstract public class BaseRobot implements RobotInterface, VoiceRecognitionListe
      * @param prompt
      */
     private void startListening(final String prompt) {
-        //setEmotion(Emotion.SUPRISED);
+        //setEmotion(Emotion.SURPRISED);
         if (prompt != null) {
             if (say(prompt)) {
                 setSpeechState(SpeechState.WAITING_TO_LISTEN);

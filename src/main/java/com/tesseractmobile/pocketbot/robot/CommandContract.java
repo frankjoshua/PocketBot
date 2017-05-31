@@ -54,6 +54,8 @@ public class CommandContract {
     public static final String PARAM_TEXT_PREVIEW = "text_preview";
     public static final String PARAM_BLUETOOTH = "bluetooth";
     public static final String PARAM_PACKAGE = "package";
+    public static final String PARAM_SETTING = "setting";
+    public static final String PARAM_BOOLEAN = "boolean";
 
     //Emotion values from api.ai
     public static final String EMOTION_ANGER = "anger";
