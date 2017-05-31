@@ -28,4 +28,6 @@ public interface RobotFace {
     void say(Speech text);
 
     void setRobotInterface(final RobotInterface robotInterface);
+
+    void onDestroy();
 }

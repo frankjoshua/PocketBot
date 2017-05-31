@@ -41,11 +41,8 @@ public class EfimFaceFragment extends FaceFragment{
     @Override
     protected View createView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.robot_face, null);
-        setFace(new EfimFace(view, Robot.get()));
-        return view;
-    }
-
-    protected void setFace(final RobotFace face){
+        final EfimFace face = new EfimFace(view, Robot.get());
+        setFace(face);
         RemoteControl.get().getControlSubject().subscribe(new Observer<SensorData.Control>() {
             @Override
             public void onSubscribe(@NonNull Disposable d) {
@@ -67,5 +64,8 @@ public class EfimFaceFragment extends FaceFragment{
 
             }
         });
+        return view;
     }
+
+
 }

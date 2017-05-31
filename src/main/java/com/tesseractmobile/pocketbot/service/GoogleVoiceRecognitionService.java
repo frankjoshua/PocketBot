@@ -2,9 +2,11 @@ package com.tesseractmobile.pocketbot.service;
 
 import android.app.Service;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.media.AudioManager;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -33,6 +35,7 @@ public class GoogleVoiceRecognitionService extends BaseVoiceRecognitionService i
     private boolean doError;
     private boolean doEndOfSpeech;
     private boolean doBeginningOfSpeech;
+    private long mSpeechRecognizerStartListeningTime;
 
 
     @Override
@@ -77,28 +80,20 @@ public class GoogleVoiceRecognitionService extends BaseVoiceRecognitionService i
     /**
      * @param prompt
      */
-    protected synchronized void lauchListeningIntent(final String prompt) {
+    private synchronized void lauchListeningIntent() {
 
         if(getState() != VoiceRecognitionState.READY){
             Log.d(TAG, "Unable to listen. State is " +  getState().toString());
             return;
         }
-        Log.d(TAG, "Launching Voice Prompt: " + (prompt != null ? prompt : "null"));
+        Log.d(TAG, "Launching Voice Prompt.");
         setState(VoiceRecognitionState.STARTING_LISTENING);
-        //Mute the audio to stop the beep
-//        AudioManager amanager=(AudioManager)getSystemService(Context.AUDIO_SERVICE);
-//        amanager.setStreamMute(AudioManager.STREAM_MUSIC, true);
 
         //Use Google Speech Recognizer
         final Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
 
         // Specify the calling package to identify your application
         intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, getClass().getPackage().getName());
-
-        // Display an hint to the user about what he should error.
-        if(prompt != null){
-            intent.putExtra(RecognizerIntent.EXTRA_PROMPT, prompt);
-        }
 
         // Given an hint to the recognizer about what the user is going to error
         // There are two form of language model available
@@ -109,10 +104,12 @@ public class GoogleVoiceRecognitionService extends BaseVoiceRecognitionService i
 
         // Specify how many results you want to receive. The results will be
         // sorted where the first result is the one with higher confidence.
-        intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 3);
+        intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1);
+        intent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_MINIMUM_LENGTH_MILLIS, 2500);
         // Start the Voice recognizer activity for the result.
         if (mHideVoicePrompt) {
             mSpeechRecognizer.startListening(intent);
+            mSpeechRecognizerStartListeningTime = System.currentTimeMillis();
         } else {
             //startActivityForResult(intent, VOICE_RECOGNITION_REQUEST_CODE);
             throw new UnsupportedOperationException();
@@ -206,7 +203,15 @@ public class GoogleVoiceRecognitionService extends BaseVoiceRecognitionService i
                 break;
             case SpeechRecognizer.ERROR_NO_MATCH:
                 if(getState() == VoiceRecognitionState.END_OF_SPEECH){
+                    long duration = System.currentTimeMillis() - mSpeechRecognizerStartListeningTime;
+                    if (duration < 500){
+                        //This is a Google Bug. Wait for the next error state.
+                        Log.e(TAG, "Error after " + duration + ", continuing to wait for text match.");
+                        return;
+                    }
+                    Log.e(TAG, "Error after " + duration + ", giving up hope of text match.");
                     setState(VoiceRecognitionState.READY);
+                    //startListening();
                     error("I'm sorry, I could not understand you. " + SPEECH_INSTRUTIONS);
                 } else {
                     //This should not happen but it does
@@ -228,7 +233,7 @@ public class GoogleVoiceRecognitionService extends BaseVoiceRecognitionService i
 
     @Override
     public void startListening() {
-        lauchListeningIntent(null);
+        lauchListeningIntent();
     }
 
 }

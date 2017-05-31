@@ -6,6 +6,8 @@ import com.tesseractmobile.pocketbot.robot.SensorData;
 import com.tesseractmobile.pocketbot.robot.model.Face;
 import com.tesseractmobile.pocketbot.robot.model.Speech;
 
+import java.util.ArrayList;
+
 import io.reactivex.Observer;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
@@ -15,6 +17,8 @@ import io.reactivex.disposables.Disposable;
  */
 abstract public class BaseFace implements RobotFace{
     protected RobotInterface mRobotInterface;
+    /** List of disposables to dispose in onDestroy */
+    final private ArrayList<Disposable> disposables = new ArrayList<>();
 
     @Override
     final public void setRobotInterface(final RobotInterface robotInterface){
@@ -22,7 +26,7 @@ abstract public class BaseFace implements RobotFace{
         robotInterface.getEmotion().subscribe(new Observer<Emotion>() {
             @Override
             public void onSubscribe(@NonNull Disposable d) {
-
+                disposables.add(d);
             }
 
             @Override
@@ -43,7 +47,7 @@ abstract public class BaseFace implements RobotFace{
         robotInterface.getFaceSubject().subscribe(new Observer<Face>() {
             @Override
             public void onSubscribe(@NonNull Disposable d) {
-
+                disposables.add(d);
             }
 
             @Override
@@ -64,7 +68,7 @@ abstract public class BaseFace implements RobotFace{
         robotInterface.getSpeechSubject().subscribe(new Observer<Speech>() {
             @Override
             public void onSubscribe(@NonNull Disposable d) {
-
+                disposables.add(d);
             }
 
             @Override
@@ -82,6 +86,14 @@ abstract public class BaseFace implements RobotFace{
 
             }
         });
+    }
+
+    @Override
+    public void onDestroy() {
+        for(Disposable disposable : disposables){
+            disposable.dispose();
+        }
+        disposables.clear();
     }
 
     public void onControlReceived(final SensorData.Control message) {
