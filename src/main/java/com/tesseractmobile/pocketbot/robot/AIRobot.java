@@ -13,6 +13,7 @@ import io.reactivex.subjects.BehaviorSubject;
 abstract public class AIRobot extends BaseRobot {
 
     private BehaviorSubject<TextInput> mTextInputSubject = BehaviorSubject.create();
+    private Disposable mTextInputDisposable;
 
     public AIRobot(final DataStore dataStore) {
         super(dataStore);
@@ -23,10 +24,15 @@ abstract public class AIRobot extends BaseRobot {
      * @param ai
      */
     public void setAI(final AI ai){
+        //Unsubscribe from old ai
+        if(mTextInputDisposable != null && !mTextInputDisposable.isDisposed()){
+            mTextInputDisposable.dispose();
+        }
+        //Pass text to AI
         mTextInputSubject.subscribe(new Observer<TextInput>() {
            @Override
            public void onSubscribe(@NonNull Disposable d) {
-
+                mTextInputDisposable = d;
            }
 
            @Override

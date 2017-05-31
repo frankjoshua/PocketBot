@@ -24,6 +24,15 @@ abstract public class BaseVoiceRecognitionService extends Service implements Voi
     protected VoiceRecognitionState mState = VoiceRecognitionState.READY;
     /** Save volume to restore after unmuting */
     private int volume;
+    private AudioManager audioManager;
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        //Save initial volume
+        audioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
+        volume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+    }
 
     protected void error(final String text){
         final VoiceRecognitionListener voiceRecognitionListener = this.mVoiceRecognitionListener;
@@ -44,14 +53,14 @@ abstract public class BaseVoiceRecognitionService extends Service implements Voi
         mState = state;
         if(state == VoiceRecognitionState.STARTING_LISTENING){
             //Mute the audio to stop the beep
-            AudioManager amanager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
-            volume = amanager.getStreamVolume(AudioManager.STREAM_MUSIC);
-            amanager.setStreamVolume(AudioManager.STREAM_MUSIC, 0, 0);
+            audioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
+            volume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 0, 0);
         }
         if(state == VoiceRecognitionState.READY || state == VoiceRecognitionState.ERROR){
             //Mute the audio to stop the beep
-            AudioManager amanager=(AudioManager)getSystemService(Context.AUDIO_SERVICE);
-            amanager.setStreamVolume(AudioManager.STREAM_MUSIC, volume, 0);
+            audioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
+            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, volume, 0);
         }
         final VoiceRecognitionListener voiceRecognitionListener = this.mVoiceRecognitionListener;
         if(voiceRecognitionListener != null) {

@@ -33,7 +33,7 @@ public class EfimFace extends BaseFace implements RobotFace, OnClickListener{
     };
 
     public EfimFace(final View view, final RobotInterface robotInterface){
-        setRobotInterface(robotInterface);
+
         //Init views
         mouthView = (MouthView) view.findViewById(R.id.mouthView);
         mLeftEye = (EyeView) view.findViewById(R.id.eyeViewLeft);
@@ -43,6 +43,9 @@ public class EfimFace extends BaseFace implements RobotFace, OnClickListener{
         mLeftEye.setOnClickListener(this);
         mRightEye.setOnClickListener(this);
         mouthView.setOnClickListener(this);
+
+        //Set the Robot interface
+        setRobotInterface(robotInterface);
     }
 
     @Override

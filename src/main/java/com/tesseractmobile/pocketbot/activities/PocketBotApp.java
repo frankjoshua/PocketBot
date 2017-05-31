@@ -30,11 +30,19 @@ import io.fabric.sdk.android.Fabric;
  */
 public class PocketBotApp extends Application{
 
+    /** Some libraries cause onCreate to be called multiple times */
+    private static boolean onCreateCalled = false;
+
     @Override
     public void onCreate() {
+        //Make sure this code has not already run before
+        if(onCreateCalled){
+            return;
+        }
+        onCreateCalled = true;
         super.onCreate();
-        setup();
 
+        setup();
 
         if (BuildConfig.DEBUG) {
             StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
