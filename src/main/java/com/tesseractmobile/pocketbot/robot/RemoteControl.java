@@ -112,7 +112,9 @@ public class RemoteControl implements ChildEventListener, DataStore.OnAuthComple
      * Call when connection is lost
      */
     private synchronized void onConnectionLost(){
-        mControlSubject.onError(new UnsupportedOperationException("Connection Lost"));
+        if(mControlSubject.hasObservers()){
+            mControlSubject.onError(new UnsupportedOperationException("Connection Lost"));
+        }
     }
 
     /**
