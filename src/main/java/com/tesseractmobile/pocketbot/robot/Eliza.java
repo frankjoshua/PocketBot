@@ -146,6 +146,6 @@ public class Eliza {
             result += " " + afterKeyword;
         }
 
-        return result;
+        return result.toLowerCase();
     }
 }
