@@ -37,6 +37,8 @@ public class GoogleVoiceRecognitionService extends BaseVoiceRecognitionService i
     private boolean doBeginningOfSpeech;
     private long mSpeechRecognizerStartListeningTime;
 
+    /** If true the voice recognizer failed to load */
+    private boolean isErrorState;
 
     @Override
     public void onCreate() {
@@ -44,18 +46,22 @@ public class GoogleVoiceRecognitionService extends BaseVoiceRecognitionService i
         // Load settings
         mHideVoicePrompt = HIDE_VOICE_PROMPT;
 
-        if (checkVoiceRecognition()) {
-            mSpeechRecognizer = SpeechRecognizer.createSpeechRecognizer(this, ComponentName.unflattenFromString("com.google.android.googlequicksearchbox/com.google.android.voicesearch.serviceapi.GoogleRecognitionService"));
-            mSpeechRecognizer.setRecognitionListener(this);
+        if (!checkVoiceRecognition()) {
+            isErrorState = true;
+            return;
         }
+        mSpeechRecognizer = SpeechRecognizer.createSpeechRecognizer(this, ComponentName.unflattenFromString("com.google.android.googlequicksearchbox/com.google.android.voicesearch.serviceapi.GoogleRecognitionService"));
+        mSpeechRecognizer.setRecognitionListener(this);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mSpeechRecognizer.stopListening();
-        mSpeechRecognizer.cancel();
-        mSpeechRecognizer.destroy();
+        if(!isErrorState) {
+            mSpeechRecognizer.stopListening();
+            mSpeechRecognizer.cancel();
+            mSpeechRecognizer.destroy();
+        }
     }
 
     private boolean checkVoiceRecognition() {
@@ -81,6 +87,10 @@ public class GoogleVoiceRecognitionService extends BaseVoiceRecognitionService i
      * @param prompt
      */
     private synchronized void lauchListeningIntent() {
+
+        if(isErrorState){
+            return;
+        }
 
         if(getState() != VoiceRecognitionState.READY){
             Log.d(TAG, "Unable to listen. State is " +  getState().toString());
