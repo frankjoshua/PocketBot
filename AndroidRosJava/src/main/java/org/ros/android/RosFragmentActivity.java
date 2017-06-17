@@ -58,20 +58,24 @@ abstract public class RosFragmentActivity extends FragmentActivity {
         public void onServiceConnected(ComponentName name, IBinder binder) {
             nodeMainExecutorService = ((NodeMainExecutorService.LocalBinder) binder).getService();
 
-            if (customMasterUri != null) {
-                nodeMainExecutorService.setMasterUri(customMasterUri);
-                nodeMainExecutorService.setRosHostname(getDefaultHostAddress());
-            }
-            nodeMainExecutorService.addListener(new NodeMainExecutorServiceListener() {
-                @Override
-                public void onShutdown(NodeMainExecutorService nodeMainExecutorService) {
-                    // We may have added multiple shutdown listeners and we only want to
-                    // call finish() once.
-                    if (!RosFragmentActivity.this.isFinishing()) {
-                        RosFragmentActivity.this.finish();
-                    }
+            try {
+                if (customMasterUri != null) {
+                    nodeMainExecutorService.setMasterUri(customMasterUri);
+                    nodeMainExecutorService.setRosHostname(getDefaultHostAddress());
                 }
-            });
+                nodeMainExecutorService.addListener(new NodeMainExecutorServiceListener() {
+                    @Override
+                    public void onShutdown(NodeMainExecutorService nodeMainExecutorService) {
+                        // We may have added multiple shutdown listeners and we only want to
+                        // call finish() once.
+                        if (!RosFragmentActivity.this.isFinishing()) {
+                            RosFragmentActivity.this.finish();
+                        }
+                    }
+                });
+            } catch (Exception e){
+                
+            }
             if (getMasterUri() == null) {
                 startMasterChooser();
             } else {
