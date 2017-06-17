@@ -74,7 +74,7 @@ abstract public class RosFragmentActivity extends FragmentActivity {
                     }
                 });
             } catch (Exception e){
-                
+
             }
             if (getMasterUri() == null) {
                 startMasterChooser();
