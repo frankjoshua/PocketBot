@@ -20,6 +20,7 @@ import android.speech.tts.TextToSpeech.OnInitListener;
 import android.speech.tts.UtteranceProgressListener;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 
 import com.tesseractmobile.pocketbot.R;
@@ -193,9 +194,14 @@ public class MouthView extends android.support.v7.widget.AppCompatTextView imple
                 Manifest.permission.RECORD_AUDIO);
         if(permissionCheck == PackageManager.PERMISSION_GRANTED) {
             //Start the visualizer to animated the mouth
-            final Visualizer mVisualizer = new Visualizer(0);
-            mVisualizer.setDataCaptureListener(MouthView.this, Visualizer.getMaxCaptureRate() / 2, true, false);
-            mVisualizer.setEnabled(true);
+            try {
+                final Visualizer mVisualizer = new Visualizer(0);
+                mVisualizer.setDataCaptureListener(MouthView.this, Visualizer.getMaxCaptureRate() / 2, true, false);
+                mVisualizer.setEnabled(true);
+            } catch (Exception ex){
+                Log.e(MouthView.class.getSimpleName(), ex.toString());
+            }
+
         }
 
         //Create path for teeth

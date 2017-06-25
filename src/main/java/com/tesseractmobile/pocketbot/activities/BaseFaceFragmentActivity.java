@@ -3,9 +3,6 @@ package com.tesseractmobile.pocketbot.activities;
 import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -36,7 +33,7 @@ import com.google.android.gms.appinvite.AppInviteInvitation;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.code.chatterbotapi.ChatterBot;
@@ -44,6 +41,7 @@ import com.google.code.chatterbotapi.ChatterBotFactory;
 import com.google.code.chatterbotapi.ChatterBotSession;
 import com.google.code.chatterbotapi.ChatterBotThought;
 import com.google.code.chatterbotapi.ChatterBotType;
+import com.tesseractmobile.pocketbot.BuildConfig;
 import com.tesseractmobile.pocketbot.R;
 import com.tesseractmobile.pocketbot.activities.fragments.CallbackFragment;
 import com.tesseractmobile.pocketbot.activities.fragments.EmotionsFragment;
@@ -298,16 +296,18 @@ public class BaseFaceFragmentActivity extends RosFragmentActivity implements Sha
      * @return true if google play services is available
      */
     private boolean checkGooglePlayServices() {
-        final int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+        final int status = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);
         if (status != ConnectionResult.SUCCESS) {
-            Log.e(TAG, GooglePlayServicesUtil.getErrorString(status));
+            Log.e(TAG, GoogleApiAvailability.getInstance().getErrorString(status));
 
             // ask user to update google play services.
-            Dialog dialog = GooglePlayServicesUtil.getErrorDialog(status, this, 1);
-            dialog.show();
+            if(BuildConfig.DEBUG == false) {
+                final Dialog dialog = GoogleApiAvailability.getInstance().getErrorDialog(this, status, 1);
+                dialog.show();
+            }
             return false;
         } else {
-            Log.i(TAG, GooglePlayServicesUtil.getErrorString(status));
+            Log.i(TAG, GoogleApiAvailability.getInstance().getErrorString(status));
             // google play services is updated.
             //your code goes here...
             return true;
@@ -456,8 +456,8 @@ public class BaseFaceFragmentActivity extends RosFragmentActivity implements Sha
      * @param faceId
      */
     private void switchFace(int faceId){
-        final FragmentManager supportFragmentManager = getFragmentManager();
-        final FragmentTransaction ft = supportFragmentManager.beginTransaction();
+        final android.support.v4.app.FragmentManager supportFragmentManager = getSupportFragmentManager();
+        final android.support.v4.app.FragmentTransaction ft = supportFragmentManager.beginTransaction();
         final FaceFragment faceFragment = FaceFragmentFactory.getFaceFragment(faceId);
         final boolean isUseFaceTracking = faceFragment.isUseFaceTracking() && checkGooglePlayServices();
 
@@ -494,11 +494,11 @@ public class BaseFaceFragmentActivity extends RosFragmentActivity implements Sha
         } else {
             if(mFaceTrackingActive) {
                 mFaceTrackingActive = false;
-                final Fragment faceTrackingFragment = supportFragmentManager.findFragmentByTag(FRAGMENT_FACE_TRACKING);
+                final android.support.v4.app.Fragment faceTrackingFragment = supportFragmentManager.findFragmentByTag(FRAGMENT_FACE_TRACKING);
                 if (faceFragment != null) {
                     ft.remove(faceTrackingFragment);
                 }
-                final Fragment previewFragment = supportFragmentManager.findFragmentByTag(FRAGMENT_PREVIEW);
+                final android.support.v4.app.Fragment previewFragment = supportFragmentManager.findFragmentByTag(FRAGMENT_PREVIEW);
                 if (previewFragment != null) {
                     ft.remove(previewFragment);
                 }

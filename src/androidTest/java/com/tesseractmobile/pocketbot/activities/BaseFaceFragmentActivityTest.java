@@ -1,11 +1,13 @@
 package com.tesseractmobile.pocketbot.activities;
 
+import android.support.test.espresso.action.ViewActions;
 import android.support.test.espresso.assertion.ViewAssertions;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.view.View;
 
 import com.tesseractmobile.pocketbot.R;
+import com.tesseractmobile.pocketbot.activities.fragments.facefragments.FaceFragmentFactory;
 
 import static android.support.test.espresso.Espresso.onView;
 
@@ -23,6 +25,7 @@ import tools.fastlane.screengrab.locale.LocaleTestRule;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
+import static android.support.test.espresso.action.ViewActions.pressBack;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
@@ -51,4 +54,12 @@ public class BaseFaceFragmentActivityTest {
         onView(withId(R.id.main_window)).check(ViewAssertions.matches(isDisplayed()));
         //Screengrab.screenshot("name_of_screenshot_here");
     }
+
+    @Test
+    public void testEfimface() throws Exception {
+        PocketBotSettings.setSelectedFace(mActivityRule.getActivity(), FaceFragmentFactory.ID_FACE_EFIM);
+        onView(withId(R.id.eyeViewLeft)).check(ViewAssertions.matches(isDisplayed()));
+    }
+
+
 }

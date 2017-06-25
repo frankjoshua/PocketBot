@@ -1,16 +1,15 @@
 package com.tesseractmobile.pocketbot.activities.wizard;
 
 import android.content.Context;
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 
 import com.tesseractmobile.pocketbot.R;
-import com.tesseractmobile.pocketbot.activities.LauncherActivity;
 
 /**
  * Created by josh on 4/17/17.
  */
 
-public class WizardFragment extends Fragment {
+abstract class WizardFragment extends Fragment {
     private ConfigWizard configWizard;
 
     @Override
