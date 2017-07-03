@@ -55,7 +55,7 @@ public class ControlFaceFragment extends QuickBloxFragment implements View.OnCli
 
     @Override
     protected View createView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        final View view = inflater.inflate(R.layout.face_control, null);
+        final View view = inflater.inflate(R.layout.face_control, container, false);
         mConnectButton = (ImageButton) view.findViewById(R.id.btnConnect);
         mConnectButton.setOnClickListener(this);
         mRemoteVideoView = (RTCGLVideoView) view.findViewById(R.id.remoteVideoView);
