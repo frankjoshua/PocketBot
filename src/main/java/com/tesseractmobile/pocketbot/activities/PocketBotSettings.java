@@ -63,8 +63,8 @@ public class PocketBotSettings {
      * @param b
      * @return
      */
-    static public boolean setShowPreview(final Context context, final boolean b){
-        return PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean(KEY_SHOW_PREVIEW, b).commit();
+    static public void setShowPreview(final Context context, final boolean b){
+        PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean(KEY_SHOW_PREVIEW, b).apply();
     }
 
     /**
@@ -82,8 +82,8 @@ public class PocketBotSettings {
      * @param b
      * @return
      */
-    static public boolean setShowTextPreview(final Context context, final boolean b){
-        return PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean(KEY_SHOW_TEXT_PREVIEW, b).commit();
+    static public void setShowTextPreview(final Context context, final boolean b){
+        PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean(KEY_SHOW_TEXT_PREVIEW, b).apply();
     }
 
     /**
@@ -101,8 +101,8 @@ public class PocketBotSettings {
      * @param b
      * @return
      */
-    static public boolean setUseBluetooth(final Context context, final boolean b){
-        return PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean(KEY_USE_BLUETOOTH, b).commit();
+    static public void setUseBluetooth(final Context context, final boolean b){
+        PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean(KEY_USE_BLUETOOTH, b).apply();
     }
 
     /**
@@ -111,8 +111,8 @@ public class PocketBotSettings {
      * @param faceId
      * @return
      */
-    static public boolean setSelectedFace(final Context context, final int faceId){
-        return PreferenceManager.getDefaultSharedPreferences(context).edit().putInt(KEY_SELECTED_FACE, faceId).commit();
+    static public void setSelectedFace(final Context context, final int faceId){
+        PreferenceManager.getDefaultSharedPreferences(context).edit().putInt(KEY_SELECTED_FACE, faceId).apply();
     }
 
     /**
@@ -124,8 +124,8 @@ public class PocketBotSettings {
         return PreferenceManager.getDefaultSharedPreferences(context).getInt(KEY_SELECTED_FACE, DEFAULT_FACE_ID);
     }
 
-    public static boolean setPassword(final Context context, final String password) {
-        return PreferenceManager.getDefaultSharedPreferences(context).edit().putString(KEY_PASSWORD, password).commit();
+    public static void setPassword(final Context context, final String password) {
+        PreferenceManager.getDefaultSharedPreferences(context).edit().putString(KEY_PASSWORD, password).apply();
     }
 
     /**
@@ -177,8 +177,8 @@ public class PocketBotSettings {
      * @param userId
      * @return
      */
-    public static boolean setLastRobotId(Context context, String userId) {
-        return PreferenceManager.getDefaultSharedPreferences(context).edit().putString(KEY_LAST_ROBOT_ID, userId).commit();
+    public static void setLastRobotId(Context context, String userId) {
+        PreferenceManager.getDefaultSharedPreferences(context).edit().putString(KEY_LAST_ROBOT_ID, userId).apply();
     }
 
     public static String getRobotId(Context context) {
@@ -192,8 +192,8 @@ public class PocketBotSettings {
         return uuid;
     }
 
-    public static boolean setRobotName(Context context, String name) {
-        return PreferenceManager.getDefaultSharedPreferences(context).edit().putString(KEY_ROBOT_NAME, name).commit();
+    public static void setRobotName(Context context, String name) {
+        PreferenceManager.getDefaultSharedPreferences(context).edit().putString(KEY_ROBOT_NAME, name).apply();
     }
 
     public static String getRobotName(Context context) {
@@ -201,24 +201,24 @@ public class PocketBotSettings {
         return name;
     }
 
-    public static boolean setRobotId(Context context, String userId) {
-        return PreferenceManager.getDefaultSharedPreferences(context).edit().putString(KEY_ROBOT_ID, userId).commit();
+    public static void setRobotId(Context context, String userId) {
+        PreferenceManager.getDefaultSharedPreferences(context).edit().putString(KEY_ROBOT_ID, userId).apply();
     }
 
     public static String getApiAiKey(final Context context){
         return PreferenceManager.getDefaultSharedPreferences(context).getString(KEY_API_AI_KEY, DEFAULT_API_AI_KEY);
     }
 
-    public static boolean setApiAiKey(final Context context, final String key){
-        return PreferenceManager.getDefaultSharedPreferences(context).edit().putString(KEY_API_AI_KEY, key).commit();
+    public static void setApiAiKey(final Context context, final String key){
+        PreferenceManager.getDefaultSharedPreferences(context).edit().putString(KEY_API_AI_KEY, key).apply();
     }
 
     public static String getApiAiToken(final Context context){
         return PreferenceManager.getDefaultSharedPreferences(context).getString(KEY_API_AI_TOKEN, DEFAULT_API_AI_TOKEN);
     }
 
-    public static boolean setApiAiToken(final Context context, final String token){
-        return PreferenceManager.getDefaultSharedPreferences(context).edit().putString(KEY_API_AI_TOKEN, token).commit();
+    public static void setApiAiToken(final Context context, final String token){
+        PreferenceManager.getDefaultSharedPreferences(context).edit().putString(KEY_API_AI_TOKEN, token).apply();
     }
 
     public static boolean allowTelepresence(final Context context) {
@@ -241,8 +241,8 @@ public class PocketBotSettings {
      * @param name
      * @return
      */
-    public static boolean setBluetoothDevice(Context context, String name) {
-        return PreferenceManager.getDefaultSharedPreferences(context).edit().putString(KEY_BLUETOOTH_DEVICE, name).commit();
+    public static void setBluetoothDevice(Context context, String name) {
+        PreferenceManager.getDefaultSharedPreferences(context).edit().putString(KEY_BLUETOOTH_DEVICE, name).apply();
     }
 
     /**
@@ -254,12 +254,12 @@ public class PocketBotSettings {
         return PreferenceManager.getDefaultSharedPreferences(context).getString(KEY_BLUETOOTH_DEVICE, "");
     }
 
-    public static boolean setUseFastFaceTracking(Context context, boolean fastFaceTracking) {
-        return PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean(KEY_FAST_TRACKING, fastFaceTracking).commit();
+    public static void setUseFastFaceTracking(Context context, boolean fastFaceTracking) {
+        PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean(KEY_FAST_TRACKING, fastFaceTracking).apply();
     }
 
-    public static boolean setQuickBloxId(final Context context, int qbUserId) {
-        return PreferenceManager.getDefaultSharedPreferences(context).edit().putInt(KEY_QB_ID, qbUserId).commit();
+    public static void setQuickBloxId(final Context context, int qbUserId) {
+        PreferenceManager.getDefaultSharedPreferences(context).edit().putInt(KEY_QB_ID, qbUserId).apply();
     }
 
     public static int getQuickBloxId(final Context context){
@@ -274,8 +274,8 @@ public class PocketBotSettings {
         return PreferenceManager.getDefaultSharedPreferences(context);
     }
 
-    public static boolean setAutoSignIn(final Context context, final boolean b) {
-        return PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean(KEY_AUTO_SIGN_IN, b).commit();
+    public static void setAutoSignIn(final Context context, final boolean b) {
+        PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean(KEY_AUTO_SIGN_IN, b).apply();
     }
 
     public static boolean isKeepAlive(final Context context) {
@@ -286,8 +286,8 @@ public class PocketBotSettings {
      * Save the ROS master host
      * @param host
      */
-    public static boolean setRosMasterUri(final Context context, final String host) {
-        return getSharedPrefs(context).edit().putString(KEY_ROS_MASTER_URI, host).commit();
+    public static void setRosMasterUri(final Context context, final String host) {
+        getSharedPrefs(context).edit().putString(KEY_ROS_MASTER_URI, host).apply();
     }
 
     /**
@@ -315,8 +315,8 @@ public class PocketBotSettings {
      * @param startingActivityId
      * @return
      */
-    public static boolean setStartingActvityId(final Context context, final int startingActivityId) {
-        return getSharedPrefs(context).edit().putInt(KEY_STARTING_ACTIVITY_ID, startingActivityId).commit();
+    public static void setStartingActvityId(final Context context, final int startingActivityId) {
+        getSharedPrefs(context).edit().putInt(KEY_STARTING_ACTIVITY_ID, startingActivityId).apply();
     }
 
     /**

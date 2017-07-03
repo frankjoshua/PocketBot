@@ -677,6 +677,10 @@ public class BaseFaceFragmentActivity extends RosFragmentActivity implements Sha
             startActivity(WizardActivity.getLaunchIntent(this));
             finish();
             return true;
+        } else if(id == R.id.nav_control){
+            //Switch to control face
+            PocketBotSettings.setSelectedFace(this, FaceFragmentFactory.ID_FACE_CONTROL);
+            return true;
         }
         throw new UnsupportedOperationException("Not implemented! " + item.toString());
     }
