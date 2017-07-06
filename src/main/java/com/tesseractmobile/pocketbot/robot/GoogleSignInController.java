@@ -148,6 +148,7 @@ public class GoogleSignInController implements GoogleApiClient.OnConnectionFaile
     @Override
     public void onConnectionFailed(final ConnectionResult result) {
         //I don't think anything needs to be done here - this would be rare
+        Toast.makeText(mContext, result.getErrorMessage(), Toast.LENGTH_LONG).show();
     }
 
     public Scope[] getScopeArray() {
