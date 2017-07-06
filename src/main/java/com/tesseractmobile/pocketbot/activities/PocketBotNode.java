@@ -38,11 +38,15 @@ public class PocketBotNode implements NodeMain {
     public final static java.lang.String NODE_PREFIX = "pocketbot";
 
     public PocketBotNode(final NodeMainExecutor nodeMainExecutor, final URI masterUri) {
-        NodeConfiguration nodeConfiguration =
-                NodeConfiguration.newPublic(InetAddressFactory.newNonLoopback().getHostAddress(),
-                        masterUri);
-        nodeMainExecutor
-                .execute(this, nodeConfiguration.setNodeName(NODE_PREFIX + "_" + UUID.randomUUID().toString().substring(0, 4)));
+        try {
+            final NodeConfiguration nodeConfiguration =
+                    NodeConfiguration.newPublic(InetAddressFactory.newNonLoopback().getHostAddress(),
+                            masterUri);
+            nodeMainExecutor
+                    .execute(this, nodeConfiguration.setNodeName(NODE_PREFIX + "_" + UUID.randomUUID().toString().substring(0, 4)));
+        } catch (Exception e){
+            //Could not find non loopback device
+        }
     }
 
     @Override
