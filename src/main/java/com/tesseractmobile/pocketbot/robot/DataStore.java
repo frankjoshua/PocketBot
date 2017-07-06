@@ -200,6 +200,11 @@ public class DataStore implements SharedPreferences.OnSharedPreferenceChangeList
         return mAuthData;
     }
 
+    public void signOut() {
+        FirebaseAuth.getInstance().signOut();
+        mAuthData = null;
+    }
+
     public interface OnAuthCompleteListener {
         void onAuthComplete(final AuthData authData);
     }

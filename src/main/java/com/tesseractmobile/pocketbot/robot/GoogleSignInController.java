@@ -67,12 +67,12 @@ public class GoogleSignInController implements GoogleApiClient.OnConnectionFaile
      */
     public void startSignin(final FragmentActivity fragmentActivity, final int requestCode) {
         if(mGoogleApiClient.isConnected()){
-            FirebaseAuth.getInstance().signOut();
             Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(new ResultCallback<Status>() {
                 @Override
                 public void onResult(@NonNull Status status) {
                     mGoogleApiClient.disconnect();
-                    Toast.makeText(fragmentActivity, "Signed Out!", Toast.LENGTH_LONG);
+                    Robot.get().signOut();
+                    Toast.makeText(fragmentActivity, "Signed Out!", Toast.LENGTH_LONG).show();
                 }
             });
         } else {

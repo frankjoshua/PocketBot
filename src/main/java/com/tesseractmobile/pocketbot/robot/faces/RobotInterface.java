@@ -124,4 +124,6 @@ public interface RobotInterface {
     BehaviorSubject<Speech> getSpeechSubject();
 
     void onSpeechComplete();
+
+    void signOut();
 }

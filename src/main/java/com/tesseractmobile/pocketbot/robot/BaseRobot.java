@@ -345,6 +345,11 @@ abstract public class BaseRobot implements RobotInterface, VoiceRecognitionListe
     }
 
     @Override
+    public void signOut() {
+        mDataStore.signOut();
+    }
+
+    @Override
     public void registerOnAuthCompleteListener(DataStore.OnAuthCompleteListener onAuthCompleteListener) {
         mDataStore.registerOnAuthCompleteListener(onAuthCompleteListener);
     }
