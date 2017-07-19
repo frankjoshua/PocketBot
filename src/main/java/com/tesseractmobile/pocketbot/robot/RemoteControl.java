@@ -113,7 +113,7 @@ public class RemoteControl implements ChildEventListener, DataStore.OnAuthComple
      */
     private synchronized void onConnectionLost(){
         if(mControlSubject.hasObservers()){
-            mControlSubject.onError(new UnsupportedOperationException("Connection Lost"));
+            mControlSubject.onNext(new SensorData.Control());
         }
     }
 
@@ -202,6 +202,7 @@ public class RemoteControl implements ChildEventListener, DataStore.OnAuthComple
 
     @Override
     public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+        //This robot has received a remote control command from a remote robot
         mControlSubject.onNext(dataSnapshot.getValue(SensorData.Control.class));
     }
 
@@ -235,8 +236,8 @@ public class RemoteControl implements ChildEventListener, DataStore.OnAuthComple
         connectedRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                boolean connected = dataSnapshot.getValue(Boolean.class);
-                if (connected == false) {
+                final Boolean connected = dataSnapshot.getValue(Boolean.class);
+                if (connected != null && !connected) {
                     onConnectionLost();
                 }
             }

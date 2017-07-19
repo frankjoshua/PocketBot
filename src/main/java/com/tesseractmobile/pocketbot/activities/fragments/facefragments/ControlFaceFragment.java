@@ -20,11 +20,13 @@ import com.tesseractmobile.pocketbot.R;
 import com.tesseractmobile.pocketbot.activities.PocketBotSettings;
 import com.tesseractmobile.pocketbot.activities.fragments.RobotSelectionDialog;
 import com.tesseractmobile.pocketbot.robot.Constants;
+import com.tesseractmobile.pocketbot.robot.RemoteControl;
 import com.tesseractmobile.pocketbot.robot.Robot;
 import com.tesseractmobile.pocketbot.robot.RobotInfo;
+import com.tesseractmobile.pocketbot.robot.SensorData;
+import com.tesseractmobile.pocketbot.robot.faces.BaseFace;
 import com.tesseractmobile.pocketbot.robot.faces.ControlFace;
 import com.tesseractmobile.pocketbot.robot.faces.RobotFace;
-import com.tesseractmobile.pocketbot.robot.faces.RobotInterface;
 
 import org.ros.android.RosFragmentActivity;
 import org.ros.android.view.visualization.VisualizationView;
@@ -33,6 +35,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import io.reactivex.Observer;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.disposables.Disposable;
 
 /**
  * Created by josh on 10/25/2015.
@@ -47,6 +53,7 @@ public class ControlFaceFragment extends QuickBloxFragment implements View.OnCli
     private QBRTCSession mSession;
 
     private Handler mHandler = new Handler();
+    private Disposable mControlDisplosable;
 
     @Override
     public boolean isUseFaceTracking() {
@@ -85,7 +92,7 @@ public class ControlFaceFragment extends QuickBloxFragment implements View.OnCli
             mSession.hangUp(null);
             setRemoteState(RemoteState.NOT_CONNECTED);
         }
-        ((ControlFace) mRobotFace).setRemoteRobotId(null);
+        ((ControlFace) mRobotFace).controlRemoteRobot(null);
     }
 
     private void connectToRemoteRobot(final int remoteNumber, final String remoteRobotId) {
@@ -112,7 +119,7 @@ public class ControlFaceFragment extends QuickBloxFragment implements View.OnCli
         mSession.startCall(userInfo);
 
         //Connect to remote robot
-        ((ControlFace) mRobotFace).setRemoteRobotId(remoteRobotId);
+        ((ControlFace) mRobotFace).controlRemoteRobot(remoteRobotId);
 
         //Save UserId
         PocketBotSettings.setLastRobotId(activity, remoteRobotId);
@@ -137,6 +144,44 @@ public class ControlFaceFragment extends QuickBloxFragment implements View.OnCli
                 }
             }
         });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        //Listen for remote messages
+        RemoteControl.get().getControlSubject().subscribe(new Observer<SensorData.Control>() {
+            @Override
+            public void onSubscribe(@NonNull Disposable d) {
+                mControlDisplosable = d;
+            }
+
+            @Override
+            public void onNext(@NonNull SensorData.Control control) {
+                ((BaseFace) mRobotFace).onControlReceived(control);
+            }
+
+            @Override
+            public void onError(@NonNull Throwable e) {
+                //Send stop to face
+                ((BaseFace) mRobotFace).onControlReceived(new SensorData.Control());
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        });
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        //Stop listening for remote messages
+        final Disposable controlDisposable = mControlDisplosable;
+        if(controlDisposable != null && !controlDisposable.isDisposed()){
+            controlDisposable.dispose();
+        }
     }
 
     @Override

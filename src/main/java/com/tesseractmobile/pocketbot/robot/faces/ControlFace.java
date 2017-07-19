@@ -200,9 +200,9 @@ public class ControlFace extends BaseFace implements JoystickView.JoystickListen
 
     /**
      * Set the UUID of the remote robot to contorl
-     * @param uuid
+     * @param uuid null to disconnect
      */
-    public void setRemoteRobotId(final String uuid){
+    public void controlRemoteRobot(final String uuid){
         mRemoteRobotId = uuid;
         //Set disconnect command
         if(uuid != null){
@@ -221,6 +221,12 @@ public class ControlFace extends BaseFace implements JoystickView.JoystickListen
                 + "JoyX: " + numberFormat.format(sensorData.getControl().joy1.X) + " JoyY: " + numberFormat.format(sensorData.getControl().joy1.Y);
         final Speech speech = new Speech(text);
         say(speech);
+    }
+
+    @Override
+    public void onControlReceived(SensorData.Control message) {
+        super.onControlReceived(message);
+
     }
 
     @Override

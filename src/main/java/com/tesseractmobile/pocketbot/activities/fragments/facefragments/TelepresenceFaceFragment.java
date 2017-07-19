@@ -52,7 +52,7 @@ public class TelepresenceFaceFragment extends QuickBloxFragment{
         view = inflater.inflate(R.layout.face_telepresence, null);
         mRemoteVideoView = (RTCGLVideoView) view.findViewById(R.id.remoteVideoView);
         mUserId = (TextView) view.findViewById(R.id.tvUserId);
-        mRobotFace = new TelePresenceFace(view);
+        mRobotFace = new TelePresenceFace(view, Robot.get());
         final View progressBar = view.findViewById(R.id.pbSignIn);
         final View btnSignIn = view.findViewById(R.id.sign_in_button);
         final Activity activity = getActivity();

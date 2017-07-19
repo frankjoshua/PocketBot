@@ -22,7 +22,8 @@ public class TelePresenceFace extends BaseFace {
     private NumberFormat numberFormat = NumberFormat.getNumberInstance();
     private Handler mHandler = new Handler();
 
-    public TelePresenceFace(View view) {
+    public TelePresenceFace(final View view, final RobotInterface robotInterface) {
+        setRobotInterface(robotInterface);
         numberFormat.setMinimumFractionDigits(2);
         mUserId = (TextView) view.findViewById(R.id.tvUserId);
     }
