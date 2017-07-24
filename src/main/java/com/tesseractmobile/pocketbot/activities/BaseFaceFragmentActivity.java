@@ -681,6 +681,10 @@ public class BaseFaceFragmentActivity extends RosFragmentActivity implements Sha
             //Switch to control face
             PocketBotSettings.setSelectedFace(this, FaceFragmentFactory.ID_FACE_CONTROL);
             return true;
+        } else if(id == R.id.nav_telepresence){
+            //Switch to telepresence face
+            PocketBotSettings.setSelectedFace(this, FaceFragmentFactory.ID_FACE_TELEPRESENCE);
+            return true;
         }
         throw new UnsupportedOperationException("Not implemented! " + item.toString());
     }

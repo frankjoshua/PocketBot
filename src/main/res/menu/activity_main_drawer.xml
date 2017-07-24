@@ -11,6 +11,10 @@
             android:icon="@drawable/ic_videogame_asset_black_48dp"
             android:title="Control" />
         <item
+            android:id="@+id/nav_telepresence"
+            android:icon="@drawable/ic_video_call_black_48dp"
+            android:title="Telepresence" />
+        <item
             android:id="@+id/nav_emotions"
             android:icon="@drawable/ic_bubble_chart_black_48dp"
             android:title="Emotions" />

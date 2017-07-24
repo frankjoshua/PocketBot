@@ -123,7 +123,7 @@ public class TelepresenceFaceFragment extends QuickBloxFragment{
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mUserId.setText(Integer.toString(userId));
+                mUserId.setText("Waiting for call: " + Integer.toString(userId));
             }
         });
     }
