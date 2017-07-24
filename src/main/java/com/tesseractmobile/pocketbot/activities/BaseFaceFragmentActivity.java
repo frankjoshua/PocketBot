@@ -3,9 +3,16 @@ package com.tesseractmobile.pocketbot.activities;
 import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
@@ -15,6 +22,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.text.Html;
@@ -107,7 +115,7 @@ public class BaseFaceFragmentActivity extends RosFragmentActivity implements Sha
     private Disposable mSpeechOutDisposable;
     final private Eliza eliza = new Eliza();
 
-    public BaseFaceFragmentActivity(){
+    public BaseFaceFragmentActivity() {
         super("PocketBot", "PocketBot");
     }
 
@@ -121,7 +129,7 @@ public class BaseFaceFragmentActivity extends RosFragmentActivity implements Sha
         //Check for needed Android permissions
         checkForPermissions();
 
-        if(Robot.get().isNew()){
+        if (Robot.get().isNew()) {
             //After login show the robot selection dialog
             Robot.get().registerOnAuthCompleteListener(new DataStore.OnAuthCompleteListener() {
                 @Override
@@ -197,6 +205,47 @@ public class BaseFaceFragmentActivity extends RosFragmentActivity implements Sha
             }
         });
 
+        //Start GPS
+        initGps();
+
+    }
+
+    /**
+     * Start the Location services
+     */
+    private void initGps() {
+        // Acquire a reference to the system Location Manager
+        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
+        // Define a listener that responds to location updates
+        LocationListener locationListener = new LocationListener() {
+            public void onLocationChanged(Location location) {
+                //Publish location
+                Robot.get().getLocationSubject().onNext(location);
+            }
+
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+            }
+
+            public void onProviderEnabled(String provider) {
+            }
+
+            public void onProviderDisabled(String provider) {
+            }
+        };
+
+        // Register the listener with the Location Manager to receive location updates
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
     }
 
     /**
@@ -206,7 +255,9 @@ public class BaseFaceFragmentActivity extends RosFragmentActivity implements Sha
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             final String[] permissionList = new String[]{
                     Manifest.permission.CAMERA,
-                    Manifest.permission.RECORD_AUDIO
+                    Manifest.permission.RECORD_AUDIO,
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
             };
             for(final String permission : permissionList){
                 if(checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED){
@@ -456,10 +507,10 @@ public class BaseFaceFragmentActivity extends RosFragmentActivity implements Sha
      * @param faceId
      */
     private void switchFace(int faceId){
-        final android.support.v4.app.FragmentManager supportFragmentManager = getSupportFragmentManager();
-        final android.support.v4.app.FragmentTransaction ft = supportFragmentManager.beginTransaction();
-        final FaceFragment faceFragment = FaceFragmentFactory.getFaceFragment(faceId);
-        final boolean isUseFaceTracking = faceFragment.isUseFaceTracking() && checkGooglePlayServices();
+        final FragmentManager supportFragmentManager = getFragmentManager();
+        final FragmentTransaction ft = supportFragmentManager.beginTransaction();
+        final Fragment faceFragment = FaceFragmentFactory.getFaceFragment(faceId);
+        final boolean isUseFaceTracking = faceFragment instanceof FaceFragment && ((FaceFragment) faceFragment).isUseFaceTracking() && checkGooglePlayServices();
 
         if(supportFragmentManager.findFragmentByTag(FRAGMENT_FACE) != null){
             ft.replace(R.id.faceView, faceFragment, FRAGMENT_FACE);
@@ -494,11 +545,11 @@ public class BaseFaceFragmentActivity extends RosFragmentActivity implements Sha
         } else {
             if(mFaceTrackingActive) {
                 mFaceTrackingActive = false;
-                final android.support.v4.app.Fragment faceTrackingFragment = supportFragmentManager.findFragmentByTag(FRAGMENT_FACE_TRACKING);
+                final Fragment faceTrackingFragment = supportFragmentManager.findFragmentByTag(FRAGMENT_FACE_TRACKING);
                 if (faceFragment != null) {
                     ft.remove(faceTrackingFragment);
                 }
-                final android.support.v4.app.Fragment previewFragment = supportFragmentManager.findFragmentByTag(FRAGMENT_PREVIEW);
+                final Fragment previewFragment = supportFragmentManager.findFragmentByTag(FRAGMENT_PREVIEW);
                 if (previewFragment != null) {
                     ft.remove(previewFragment);
                 }
@@ -684,6 +735,10 @@ public class BaseFaceFragmentActivity extends RosFragmentActivity implements Sha
         } else if(id == R.id.nav_telepresence){
             //Switch to telepresence face
             PocketBotSettings.setSelectedFace(this, FaceFragmentFactory.ID_FACE_TELEPRESENCE);
+            return true;
+        } else if(id == R.id.nav_map){
+            //Switch to telepresence face
+            PocketBotSettings.setSelectedFace(this, FaceFragmentFactory.ID_FACE_MAP);
             return true;
         }
         throw new UnsupportedOperationException("Not implemented! " + item.toString());

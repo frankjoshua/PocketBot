@@ -1,5 +1,7 @@
 package com.tesseractmobile.pocketbot.activities;
 
+import android.location.Location;
+
 import java.net.URI;
 import java.util.UUID;
 
@@ -26,6 +28,7 @@ import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
 import sensor_msgs.Imu;
 import std_msgs.String;
+import sensor_msgs.NavSatFix;
 
 
 /**
@@ -61,6 +64,35 @@ public class PocketBotNode implements NodeMain {
         initImuPublisher(connectedNode);
         initVoicePublisher(connectedNode);
         initEmotionPublisher(connectedNode);
+        initLocationPublisher(connectedNode);
+    }
+
+    private void initLocationPublisher(final ConnectedNode connectedNode) {
+        final Publisher<NavSatFix> locationPublisher = connectedNode.newPublisher("/" + NODE_PREFIX + "/fix", NavSatFix._TYPE);
+        final NavSatFix fix = locationPublisher.newMessage();
+        Robot.get().getLocationSubject().subscribe(new Observer<Location>() {
+            @Override
+            public void onSubscribe(@NonNull Disposable d) {
+
+            }
+
+            @Override
+            public void onNext(@NonNull Location location) {
+                fix.setLatitude(location.getLatitude());
+                fix.setLongitude(location.getLongitude());
+                locationPublisher.publish(fix);
+            }
+
+            @Override
+            public void onError(@NonNull Throwable e) {
+
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        });
     }
 
     /**

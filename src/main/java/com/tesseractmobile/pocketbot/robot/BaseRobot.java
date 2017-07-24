@@ -1,5 +1,6 @@
 package com.tesseractmobile.pocketbot.robot;
 
+import android.location.Location;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -37,6 +38,9 @@ abstract public class BaseRobot implements RobotInterface, VoiceRecognitionListe
     private final BehaviorSubject<Speech> mSpeechSubject = BehaviorSubject.create();
     /** Updated when Speech state changes */
     private final BehaviorSubject<SpeechState> mSpeechStateSubject = BehaviorSubject.create();
+    /** Updated when robot location changes */
+    private BehaviorSubject<Location> mLocationSubject = BehaviorSubject.create();
+    /** Current speech state */
     private SpeechState mSpeechState = SpeechState.READY;
 
     private VoiceRecognitionService mVoiceRecognitionService;
@@ -112,6 +116,11 @@ abstract public class BaseRobot implements RobotInterface, VoiceRecognitionListe
     @Override
     public BehaviorSubject<SpeechState> getSpeechStateSubject() {
         return mSpeechStateSubject;
+    }
+
+    @Override
+    public BehaviorSubject<Location> getLocationSubject() {
+        return mLocationSubject;
     }
 
     @Override

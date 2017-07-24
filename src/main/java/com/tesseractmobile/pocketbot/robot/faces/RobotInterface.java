@@ -1,5 +1,7 @@
 package com.tesseractmobile.pocketbot.robot.faces;
 
+import android.location.Location;
+
 import com.tesseractmobile.pocketbot.robot.AI;
 import com.tesseractmobile.pocketbot.robot.AuthData;
 import com.tesseractmobile.pocketbot.robot.BaseRobot;
@@ -126,4 +128,10 @@ public interface RobotInterface {
     void onSpeechComplete();
 
     void signOut();
+
+    /**
+     * Current location of robot
+     * @return
+     */
+    BehaviorSubject<Location> getLocationSubject();
 }
