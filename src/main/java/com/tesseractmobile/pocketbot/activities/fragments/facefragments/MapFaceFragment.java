@@ -10,7 +10,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -23,6 +22,7 @@ import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 
 /**
  * Created by josh on 7/23/17.
@@ -44,20 +44,26 @@ public class MapFaceFragment extends MapFragment implements OnMapReadyCallback {
     @Override
     public void onMapReady(final GoogleMap googleMap) {
         final LatLng stLouis = new LatLng(38.649, -90.219);
-        currentRobotLocation = googleMap.addMarker(new MarkerOptions().position(stLouis).icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_adb_black_48dp)));
+        //Create new android marker
+        currentRobotLocation = googleMap.addMarker(new MarkerOptions().position(stLouis).icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_adb_black_48dp)).title("Current Location"));
 
         //Add move to current location
         Robot.get().getLocationSubject()
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .map(location ->
                     new LatLng(location.getLatitude(), location.getLongitude())
-                ).map( latLng -> addMarkerCurrent(googleMap, latLng)).subscribe();
+                ).subscribe(latLng -> addMarkerCurrent(googleMap, latLng));
 
-//        LatLng stLouis = new LatLng(38.649, -90.219);
-//        addMarker(googleMap, stLouis);
-//        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(stLouis, 13));
         //Listen for map clicks
-        googleMap.setOnMapClickListener(latLng -> addMarker(googleMap, latLng));
+        googleMap.setOnMapClickListener(latLng -> {
+            addMarker(googleMap, latLng);
+            Robot.get().getWaypointSubject().onNext(latLng);
+        });
+
+        //Update map when new markers appear
+        Robot.get().getWaypointSubject()
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .subscribe(latLng -> addMarker(googleMap, latLng));
     }
 
     private LatLng addMarkerCurrent(final GoogleMap googleMap, final LatLng latLng) {

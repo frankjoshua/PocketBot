@@ -7,6 +7,7 @@ import android.os.Message;
 import android.os.SystemClock;
 import android.util.Log;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.tesseractmobile.pocketbot.robot.model.SpeechState;
 import com.tesseractmobile.pocketbot.robot.faces.RobotFace;
 import com.tesseractmobile.pocketbot.robot.faces.RobotInterface;
@@ -18,6 +19,8 @@ import com.tesseractmobile.pocketbot.service.VoiceRecognitionState;
 import java.util.ArrayList;
 
 import io.reactivex.subjects.BehaviorSubject;
+import io.reactivex.subjects.ReplaySubject;
+import io.reactivex.subjects.Subject;
 
 /**
  * Created by josh on 11/16/2015.
@@ -31,15 +34,17 @@ abstract public class BaseRobot implements RobotInterface, VoiceRecognitionListe
     public static final String TAG = "PocketBot";
 
     /** Updated when emotion changes */
-    private final BehaviorSubject<Emotion> mEmotion = BehaviorSubject.create();
+    private final Subject<Emotion> mEmotion = BehaviorSubject.create();
     /** Updated when face changes */
-    private final BehaviorSubject<Face> mFaceSubject = BehaviorSubject.create();
+    private final Subject<Face> mFaceSubject = BehaviorSubject.create();
     /** Updated when robot wants to speak */
-    private final BehaviorSubject<Speech> mSpeechSubject = BehaviorSubject.create();
+    private final Subject<Speech> mSpeechSubject = BehaviorSubject.create();
     /** Updated when Speech state changes */
-    private final BehaviorSubject<SpeechState> mSpeechStateSubject = BehaviorSubject.create();
+    private final Subject<SpeechState> mSpeechStateSubject = BehaviorSubject.create();
     /** Updated when robot location changes */
-    private BehaviorSubject<Location> mLocationSubject = BehaviorSubject.create();
+    private Subject<Location> mLocationSubject = BehaviorSubject.create();
+    /** Updated when waypoint is added */
+    private Subject<LatLng> mWaypointSubject = ReplaySubject.create();
     /** Current speech state */
     private SpeechState mSpeechState = SpeechState.READY;
 
@@ -90,6 +95,7 @@ abstract public class BaseRobot implements RobotInterface, VoiceRecognitionListe
     };
     private boolean mIsNew;
 
+
     public BaseRobot(final DataStore dataStore){
         mDataStore = dataStore;
     }
@@ -99,28 +105,33 @@ abstract public class BaseRobot implements RobotInterface, VoiceRecognitionListe
         mEmotion.onNext(emotion);
     }
 
-    public BehaviorSubject<Emotion> getEmotion(){
+    public Subject<Emotion> getEmotion(){
         return mEmotion;
     }
 
     @Override
-    public BehaviorSubject<Face> getFaceSubject() {
+    public Subject<Face> getFaceSubject() {
         return mFaceSubject;
     }
 
     @Override
-    public BehaviorSubject<Speech> getSpeechSubject() {
+    public Subject<Speech> getSpeechSubject() {
         return mSpeechSubject;
     }
 
     @Override
-    public BehaviorSubject<SpeechState> getSpeechStateSubject() {
+    public Subject<SpeechState> getSpeechStateSubject() {
         return mSpeechStateSubject;
     }
 
     @Override
-    public BehaviorSubject<Location> getLocationSubject() {
+    public Subject<Location> getLocationSubject() {
         return mLocationSubject;
+    }
+
+    @Override
+    public Subject<LatLng> getWaypointSubject() {
+        return mWaypointSubject;
     }
 
     @Override

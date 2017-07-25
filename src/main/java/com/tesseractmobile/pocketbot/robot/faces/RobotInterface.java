@@ -2,6 +2,7 @@ package com.tesseractmobile.pocketbot.robot.faces;
 
 import android.location.Location;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.tesseractmobile.pocketbot.robot.AI;
 import com.tesseractmobile.pocketbot.robot.AuthData;
 import com.tesseractmobile.pocketbot.robot.BaseRobot;
@@ -17,6 +18,7 @@ import com.tesseractmobile.pocketbot.robot.model.TextInput;
 import com.tesseractmobile.pocketbot.service.VoiceRecognitionListener;
 
 import io.reactivex.subjects.BehaviorSubject;
+import io.reactivex.subjects.Subject;
 
 /**
  * Created by josh on 10/17/2015.
@@ -66,26 +68,44 @@ public interface RobotInterface {
      * Get a stream of emotional states
      * @return
      */
-    BehaviorSubject<Emotion> getEmotion();
+    Subject<Emotion> getEmotion();
 
     /**
      * Face states
      * @return
      */
-    BehaviorSubject<Face> getFaceSubject();
+    Subject<Face> getFaceSubject();
 
     /**
      * TextInput states
      * @return
      */
-    BehaviorSubject<TextInput> getTextInputSubject();
+    Subject<TextInput> getTextInputSubject();
 
     /**
      * SpeechState states
      * @return
      */
-    BehaviorSubject<SpeechState> getSpeechStateSubject();
+    Subject<SpeechState> getSpeechStateSubject();
 
+    /**
+     * Current location of robot
+     * @return
+     */
+    Subject<Location> getLocationSubject();
+
+    /**
+     * Current location of robot
+     * @return
+     */
+    Subject<LatLng> getWaypointSubject();
+
+    /**
+     * Text output of robot
+     * Should be displayed to the user or turned into voice output
+     * @return
+     */
+    Subject<Speech> getSpeechSubject();
 
     VoiceRecognitionListener getVoiceRecognitionListener();
 
@@ -123,15 +143,8 @@ public interface RobotInterface {
     void look(Face face);
 
 
-    BehaviorSubject<Speech> getSpeechSubject();
-
     void onSpeechComplete();
 
     void signOut();
 
-    /**
-     * Current location of robot
-     * @return
-     */
-    BehaviorSubject<Location> getLocationSubject();
 }

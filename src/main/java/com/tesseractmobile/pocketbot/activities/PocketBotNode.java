@@ -5,6 +5,7 @@ import android.location.Location;
 import java.net.URI;
 import java.util.UUID;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.tesseractmobile.pocketbot.robot.BaseRobot;
 import com.tesseractmobile.pocketbot.robot.Emotion;
 import com.tesseractmobile.pocketbot.robot.Robot;
@@ -65,6 +66,35 @@ public class PocketBotNode implements NodeMain {
         initVoicePublisher(connectedNode);
         initEmotionPublisher(connectedNode);
         initLocationPublisher(connectedNode);
+        initWaypointPublisher(connectedNode);
+    }
+
+    private void initWaypointPublisher(final ConnectedNode connectedNode) {
+        final Publisher<NavSatFix> waypointPublisher = connectedNode.newPublisher("/" + NODE_PREFIX + "/waypoint", NavSatFix._TYPE);
+        final NavSatFix fix = waypointPublisher.newMessage();
+        Robot.get().getWaypointSubject().subscribe(new Observer<LatLng>() {
+            @Override
+            public void onSubscribe(@NonNull Disposable d) {
+
+            }
+
+            @Override
+            public void onNext(@NonNull LatLng latLng) {
+                fix.setLatitude(latLng.latitude);
+                fix.setLongitude(latLng.longitude);
+                waypointPublisher.publish(fix);
+            }
+
+            @Override
+            public void onError(@NonNull Throwable e) {
+
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        });
     }
 
     private void initLocationPublisher(final ConnectedNode connectedNode) {
