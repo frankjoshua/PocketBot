@@ -44,6 +44,8 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 import com.google.code.chatterbotapi.ChatterBot;
 import com.google.code.chatterbotapi.ChatterBotFactory;
 import com.google.code.chatterbotapi.ChatterBotSession;
@@ -198,42 +200,22 @@ public class BaseFaceFragmentActivity extends RosFragmentActivity implements Sha
         headerView.findViewById(R.id.tvRobotName).setOnClickListener(this);
 
         //Start Nearby devices controller when authenticated
-        Robot.get().registerOnAuthCompleteListener(new DataStore.OnAuthCompleteListener() {
-            @Override
-            public void onAuthComplete(AuthData authData) {
-                startGoogleNearbyDevicesService(mGoogleSignInController.getGoogleApiClient());
-            }
+        Robot.get().registerOnAuthCompleteListener(authData -> {
+            //Start Nearby devices
+            startGoogleNearbyDevicesService(mGoogleSignInController.getGoogleApiClient());
+            //Start GPS
+            initGps(mGoogleSignInController.getGoogleApiClient());
         });
 
-        //Start GPS
-        initGps();
+
 
     }
 
     /**
      * Start the Location services
+     * @param googleApiClient
      */
-    private void initGps() {
-        // Acquire a reference to the system Location Manager
-        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-
-        // Define a listener that responds to location updates
-        LocationListener locationListener = new LocationListener() {
-            public void onLocationChanged(Location location) {
-                //Publish location
-                Robot.get().getLocationSubject().onNext(location);
-            }
-
-            public void onStatusChanged(String provider, int status, Bundle extras) {
-            }
-
-            public void onProviderEnabled(String provider) {
-            }
-
-            public void onProviderDisabled(String provider) {
-            }
-        };
-
+    private void initGps(final GoogleApiClient googleApiClient) {
         // Register the listener with the Location Manager to receive location updates
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
@@ -245,7 +227,20 @@ public class BaseFaceFragmentActivity extends RosFragmentActivity implements Sha
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+
+        // Create a new global location parameters object
+        LocationRequest locationRequest = LocationRequest.create();
+
+        //Set the update interval
+        locationRequest.setInterval(250);
+
+        // Use high accuracy
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+        //Use fused updates
+        LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient,locationRequest,
+                location -> Robot.get().getLocationSubject().onNext(location), null);
+
     }
 
     /**

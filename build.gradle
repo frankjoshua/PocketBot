@@ -206,6 +206,7 @@ dependencies {
     compile "com.google.android.gms:play-services-nearby:${playServicesVersion}"
     //Google Maps
     compile "com.google.android.gms:play-services-maps:${playServicesVersion}"
+    compile "com.google.android.gms:play-services-location:${playServicesVersion}"
     //RecyclerView
     compile "com.android.support:recyclerview-v7:${supportLibVersion}"
     //WebRTC
