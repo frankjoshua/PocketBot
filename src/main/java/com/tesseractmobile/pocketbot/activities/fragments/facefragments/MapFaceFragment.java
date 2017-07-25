@@ -44,7 +44,7 @@ public class MapFaceFragment extends MapFragment implements OnMapReadyCallback {
     @Override
     public void onMapReady(final GoogleMap googleMap) {
         final LatLng stLouis = new LatLng(38.649, -90.219);
-        currentRobotLocation = googleMap.addMarker(new MarkerOptions().position(stLouis).icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_person_add_black_48dp)));
+        currentRobotLocation = googleMap.addMarker(new MarkerOptions().position(stLouis).icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_adb_black_48dp)));
 
         //Add move to current location
         Robot.get().getLocationSubject()
