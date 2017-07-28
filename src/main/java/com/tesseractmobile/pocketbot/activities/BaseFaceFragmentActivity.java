@@ -241,6 +241,15 @@ public class BaseFaceFragmentActivity extends RosFragmentActivity implements Sha
         LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient,locationRequest,
                 location -> Robot.get().getLocationSubject().onNext(location), null);
 
+        //Update sensor data with GPS
+        Robot.get().getLocationSubject().subscribe(location -> {
+            //Update current GPS location
+            Robot.get().getSensorData().getSensor().gps.lat = (float) location.getLatitude();
+            Robot.get().getSensorData().getSensor().gps.lon = (float) location.getLongitude();
+            //Send out sensor data
+            Robot.get().sendSensorData(false);
+        });
+
     }
 
     /**
