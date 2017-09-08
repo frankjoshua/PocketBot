@@ -1,6 +1,7 @@
 package com.tesseractmobile.pocketbot.activities;
 
 import android.location.Location;
+import android.os.SystemClock;
 
 import java.net.URI;
 import java.util.UUID;
@@ -14,6 +15,7 @@ import com.tesseractmobile.pocketbot.robot.model.Speech;
 import com.tesseractmobile.pocketbot.robot.model.TextInput;
 
 import org.ros.address.InetAddressFactory;
+import org.ros.internal.message.RawMessage;
 import org.ros.message.Time;
 import org.ros.namespace.GraphName;
 import org.ros.node.ConnectedNode;
@@ -28,6 +30,7 @@ import io.reactivex.Observer;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
 import sensor_msgs.Imu;
+import std_msgs.Header;
 import std_msgs.String;
 import sensor_msgs.NavSatFix;
 
@@ -101,6 +104,7 @@ public class PocketBotNode implements NodeMain {
         final Publisher<NavSatFix> locationPublisher = connectedNode.newPublisher("/" + NODE_PREFIX + "/fix", NavSatFix._TYPE);
         final NavSatFix fix = locationPublisher.newMessage();
         Robot.get().getLocationSubject().subscribe(new Observer<Location>() {
+            int seqence = 0;
             @Override
             public void onSubscribe(@NonNull Disposable d) {
 
@@ -110,6 +114,17 @@ public class PocketBotNode implements NodeMain {
             public void onNext(@NonNull Location location) {
                 fix.setLatitude(location.getLatitude());
                 fix.setLongitude(location.getLongitude());
+                fix.setAltitude(location.getAltitude());
+                final double secs = SystemClock.uptimeMillis() / 1000.0d;
+                fix.getHeader().setStamp(new Time(secs));
+                fix.getHeader().setSeq(++seqence);
+                fix.getHeader().setFrameId(NODE_PREFIX);
+                fix.getStatus().setStatus((byte) 0);
+                fix.getStatus().setService((short) 1);
+                fix.setPositionCovariance(new double[]{
+                        location.getAccuracy(), location.getSpeed(), 0,
+                        0, 0, 0,
+                        0, 0, 0});
                 locationPublisher.publish(fix);
             }
 
