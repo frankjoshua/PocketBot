@@ -16,7 +16,7 @@ stage('Stage Build'){
 
 
 stage('Stage Unit Test'){
-    node() {
+    node('android') {
         git credentialsId: credentialsId, url: gitUrl, branch: branch
         sh "./gradlew test"
     }
