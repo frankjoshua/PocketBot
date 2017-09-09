@@ -32,6 +32,7 @@ import io.reactivex.disposables.Disposable;
 import sensor_msgs.Imu;
 import std_msgs.Header;
 import std_msgs.String;
+import std_msgs.Float32;
 import sensor_msgs.NavSatFix;
 
 
@@ -70,6 +71,24 @@ public class PocketBotNode implements NodeMain {
         initEmotionPublisher(connectedNode);
         initLocationPublisher(connectedNode);
         initWaypointPublisher(connectedNode);
+        initHeadingPublisher(connectedNode);
+    }
+
+    private void initHeadingPublisher(final ConnectedNode connectedNode) {
+        final Publisher<Float32> headingPublisher = connectedNode.newPublisher("/" + NODE_PREFIX + "/heading", Float32._TYPE);
+        final Float32 heading = headingPublisher.newMessage();
+        Robot.get().registerSensorListener(new BaseRobot.SensorListener() {
+            @Override
+            public void onSensorUpdate(SensorData sensorData) {
+                final int newHeading = sensorData.getSensor().heading;
+                //Check for new heading
+                if(Math.abs(newHeading - heading.getData()) > 1){
+                    //Publish new heading
+                    heading.setData(newHeading);
+                    headingPublisher.publish(heading);
+                }
+            }
+        });
     }
 
     private void initWaypointPublisher(final ConnectedNode connectedNode) {
