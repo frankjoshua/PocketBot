@@ -10,6 +10,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.RelativeLayout;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -20,9 +22,14 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.tesseractmobile.pocketbot.R;
 import com.tesseractmobile.pocketbot.robot.Robot;
+
+import java.util.AbstractList;
+import java.util.ArrayList;
+import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 
@@ -32,16 +39,30 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 
 public class MapFaceFragment extends MapFragment implements OnMapReadyCallback {
 
-    public static final int DEFAULT_ZOOM = 17;
+    public static final int DEFAULT_ZOOM = 16;
     private LatLng lastLatLng;
 
     private Marker currentRobotLocation;
+    private Button button;
+    private List<Marker> markers = new ArrayList<>();
+    private List<Polyline> polyLines = new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroup, Bundle bundle) {
         //Request Map
         getMapAsync(this);
-        return super.onCreateView(layoutInflater, viewGroup, bundle);
+        button = new Button(layoutInflater.getContext());
+        button.setText("Clear Waypoints");
+
+        View mapView = super.onCreateView(layoutInflater, viewGroup, bundle);
+        RelativeLayout view = new RelativeLayout(getActivity());
+        view.addView(mapView, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        final RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+        params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        view.addView(button, params);
+        // working with view
+        return view;
     }
 
     @Override
@@ -76,6 +97,21 @@ public class MapFaceFragment extends MapFragment implements OnMapReadyCallback {
         googleMap.setOnMarkerClickListener(marker -> {
             Robot.get().getWaypointSubject().onNext(marker.getPosition());
             return true;
+        });
+
+        button.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                for(Marker marker : markers){
+                    marker.remove();
+                }
+                markers.clear();
+                for(Polyline polyline : polyLines){
+                    polyline.remove();
+                }
+                polyLines.clear();
+            }
         });
     }
 
@@ -123,17 +159,21 @@ public class MapFaceFragment extends MapFragment implements OnMapReadyCallback {
             googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, DEFAULT_ZOOM));
         }
         if(lastLatLng != null){
-            googleMap.addPolyline(new PolylineOptions().add(lastLatLng).add(latLng));
+            savePolyLine(googleMap.addPolyline(new PolylineOptions().add(lastLatLng).add(latLng)));
         } else {
             //First line is from the robot
-            googleMap.addPolyline(new PolylineOptions().add(currentRobotLocation.getPosition()).add(latLng));
+            savePolyLine(googleMap.addPolyline(new PolylineOptions().add(currentRobotLocation.getPosition()).add(latLng)));
         }
         //Save lat point
         lastLatLng = latLng;
         return latLng;
     }
 
-    private void addMarker(final Marker marker) {
+    private void savePolyLine(final Polyline polyline) {
+        polyLines.add(polyline);
+    }
 
+    private void addMarker(final Marker marker) {
+        markers.add(marker);
     }
 }
