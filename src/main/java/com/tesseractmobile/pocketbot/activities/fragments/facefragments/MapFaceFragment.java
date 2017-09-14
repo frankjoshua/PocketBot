@@ -1,5 +1,11 @@
 package com.tesseractmobile.pocketbot.activities.fragments.facefragments;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +15,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -39,9 +46,14 @@ public class MapFaceFragment extends MapFragment implements OnMapReadyCallback {
 
     @Override
     public void onMapReady(final GoogleMap googleMap) {
+        // Sets the map type to be "hybrid"
+        googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+        //Get St. Louis lat long
         final LatLng stLouis = new LatLng(38.649, -90.219);
         //Create new android marker
-        currentRobotLocation = googleMap.addMarker(new MarkerOptions().position(stLouis).icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_adb_black_48dp)).title("Current Location"));
+        final Bitmap bitmap = changeBitmapColor(BitmapFactory.decodeResource(getResources(), R.drawable.ic_adb_black_48dp));
+        final BitmapDescriptor bitmapDescriptor = BitmapDescriptorFactory.fromBitmap(bitmap);//BitmapDescriptorFactory.fromResource(R.drawable.ic_adb_black_48dp);
+        currentRobotLocation = googleMap.addMarker(new MarkerOptions().position(stLouis).icon(bitmapDescriptor).title("Current Location"));
 
         //Add move to current location
         Robot.get().getLocationSubject()
@@ -67,6 +79,28 @@ public class MapFaceFragment extends MapFragment implements OnMapReadyCallback {
         });
     }
 
+    private static Bitmap changeBitmapColor(final Bitmap sourceBitmap){
+        float[] colorTransform = {
+                0, 1f, 0, 0, 0,
+                0, 0, 0.1f, 0, 0,
+                0, 0, 0, 0.30f, 0,
+                0, 0, 0, 1f, 0};
+
+        final ColorMatrix colorMatrix = new ColorMatrix();
+        colorMatrix.setSaturation(0f); //Remove Colour
+        colorMatrix.set(colorTransform); //Apply the Red
+
+        final ColorMatrixColorFilter colorFilter = new ColorMatrixColorFilter(colorMatrix);
+        final Paint paint = new Paint();
+        paint.setColorFilter(colorFilter);
+
+        final Bitmap resultBitmap = Bitmap.createBitmap(sourceBitmap.copy(Bitmap.Config.ARGB_8888, true), 0, 0, sourceBitmap.getWidth(), sourceBitmap.getHeight());
+
+        final Canvas canvas = new Canvas(resultBitmap);
+        canvas.drawBitmap(resultBitmap, 0, 0, paint);
+
+        return resultBitmap;
+    }
     /**
      * Set the current position of the robot
      * @param googleMap
