@@ -228,6 +228,11 @@ public class BaseFaceFragmentActivity extends RosFragmentActivity implements Sha
             return;
         }
 
+        //Make sure Google Api is connected
+        if(!googleApiClient.isConnected()){
+            return;
+        }
+
         // Create a new global location parameters object
         LocationRequest locationRequest = LocationRequest.create();
 

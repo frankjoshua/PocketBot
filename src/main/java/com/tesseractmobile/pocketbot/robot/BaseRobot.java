@@ -13,6 +13,7 @@ import com.tesseractmobile.pocketbot.robot.faces.RobotFace;
 import com.tesseractmobile.pocketbot.robot.faces.RobotInterface;
 import com.tesseractmobile.pocketbot.robot.model.Face;
 import com.tesseractmobile.pocketbot.robot.model.Speech;
+import com.tesseractmobile.pocketbot.robot.model.Waypoint;
 import com.tesseractmobile.pocketbot.service.VoiceRecognitionListener;
 import com.tesseractmobile.pocketbot.service.VoiceRecognitionState;
 
@@ -44,7 +45,7 @@ abstract public class BaseRobot implements RobotInterface, VoiceRecognitionListe
     /** Updated when robot location changes */
     private Subject<Location> mLocationSubject = BehaviorSubject.create();
     /** Updated when waypoint is added */
-    private Subject<LatLng> mWaypointSubject = ReplaySubject.create();
+    private Subject<Waypoint> mWaypointSubject = ReplaySubject.create();
     /** Current speech state */
     private SpeechState mSpeechState = SpeechState.READY;
 
@@ -130,7 +131,7 @@ abstract public class BaseRobot implements RobotInterface, VoiceRecognitionListe
     }
 
     @Override
-    public Subject<LatLng> getWaypointSubject() {
+    public Subject<Waypoint> getWaypointSubject() {
         return mWaypointSubject;
     }
 

@@ -15,6 +15,7 @@ import com.tesseractmobile.pocketbot.robot.model.Face;
 import com.tesseractmobile.pocketbot.robot.model.Speech;
 import com.tesseractmobile.pocketbot.robot.model.SpeechState;
 import com.tesseractmobile.pocketbot.robot.model.TextInput;
+import com.tesseractmobile.pocketbot.robot.model.Waypoint;
 import com.tesseractmobile.pocketbot.service.VoiceRecognitionListener;
 
 import io.reactivex.subjects.BehaviorSubject;
@@ -98,7 +99,7 @@ public interface RobotInterface {
      * Current location of robot
      * @return
      */
-    Subject<LatLng> getWaypointSubject();
+    Subject<Waypoint> getWaypointSubject();
 
     /**
      * Text output of robot

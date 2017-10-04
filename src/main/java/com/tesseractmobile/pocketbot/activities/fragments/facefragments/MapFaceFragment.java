@@ -26,8 +26,8 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.tesseractmobile.pocketbot.R;
 import com.tesseractmobile.pocketbot.robot.Robot;
+import com.tesseractmobile.pocketbot.robot.model.Waypoint;
 
-import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,16 +43,19 @@ public class MapFaceFragment extends MapFragment implements OnMapReadyCallback {
     private LatLng lastLatLng;
 
     private Marker currentRobotLocation;
-    private Button button;
+    private Button mBtnClear;
     private List<Marker> markers = new ArrayList<>();
     private List<Polyline> polyLines = new ArrayList<>();
+    private Button mBtnSend;
 
     @Override
     public View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroup, Bundle bundle) {
         //Request Map
         getMapAsync(this);
-        button = new Button(layoutInflater.getContext());
-        button.setText("Clear Waypoints");
+        mBtnSend = new Button(layoutInflater.getContext());
+        mBtnSend.setText("Send Waypoints");
+        mBtnClear = new Button(layoutInflater.getContext());
+        mBtnClear.setText("Clear Waypoints");
 
         View mapView = super.onCreateView(layoutInflater, viewGroup, bundle);
         RelativeLayout view = new RelativeLayout(getActivity());
@@ -60,7 +63,11 @@ public class MapFaceFragment extends MapFragment implements OnMapReadyCallback {
         final RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
         params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-        view.addView(button, params);
+        view.addView(mBtnClear, params);
+        final RelativeLayout.LayoutParams params2 = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        params2.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+        params2.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        view.addView(mBtnSend, params2);
         // working with view
         return view;
     }
@@ -84,35 +91,50 @@ public class MapFaceFragment extends MapFragment implements OnMapReadyCallback {
                 ).subscribe(latLng -> setMarkerCurrent(googleMap, latLng));
 
         //Listen for map clicks
+        final int[] count = {0};
         googleMap.setOnMapClickListener(latLng -> {
-            Robot.get().getWaypointSubject().onNext(latLng);
+            Robot.get().getWaypointSubject().onNext(new Waypoint(latLng, ++count[0]));
         });
 
         //Update map when new markers appear
         Robot.get().getWaypointSubject()
                 .subscribeOn(AndroidSchedulers.mainThread())
-                .subscribe(latLng -> addMarker(googleMap, latLng));
+                .subscribe(waypoint -> addMarker(googleMap, waypoint.position));
 
         //Listen for marker clicks
-        googleMap.setOnMarkerClickListener(marker -> {
-            Robot.get().getWaypointSubject().onNext(marker.getPosition());
-            return true;
-        });
+//        googleMap.setOnMarkerClickListener(marker -> {
+//            Robot.get().getWaypointSubject().onNext(marker.getPosition());
+//            return true;
+//        });
 
-        button.setOnClickListener(new View.OnClickListener() {
+        mBtnClear.setOnClickListener(v -> clear());
 
-            @Override
-            public void onClick(View v) {
-                for(Marker marker : markers){
-                    marker.remove();
-                }
-                markers.clear();
-                for(Polyline polyline : polyLines){
-                    polyline.remove();
-                }
-                polyLines.clear();
-            }
-        });
+        mBtnSend.setOnClickListener(v -> send());
+    }
+
+    private void send() {
+        //Save old markers
+        final List<Marker> oldMarkers = new ArrayList<>();
+        oldMarkers.addAll(markers);
+        //Clear current
+        clear();
+        int count = 0;
+        for(final Marker marker : oldMarkers){
+            count++;
+            final Waypoint waypoint = new Waypoint(marker.getPosition(), count);
+            Robot.get().getWaypointSubject().onNext(waypoint);
+        }
+    }
+
+    private void clear() {
+        for(Marker marker : markers){
+            marker.remove();
+        }
+        markers.clear();
+        for(Polyline polyline : polyLines){
+            polyline.remove();
+        }
+        polyLines.clear();
     }
 
     private static Bitmap changeBitmapColor(final Bitmap sourceBitmap){

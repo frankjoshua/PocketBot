@@ -13,6 +13,7 @@ import com.tesseractmobile.pocketbot.robot.Robot;
 import com.tesseractmobile.pocketbot.robot.SensorData;
 import com.tesseractmobile.pocketbot.robot.model.Speech;
 import com.tesseractmobile.pocketbot.robot.model.TextInput;
+import com.tesseractmobile.pocketbot.robot.model.Waypoint;
 
 import org.ros.address.InetAddressFactory;
 import org.ros.internal.message.RawMessage;
@@ -29,6 +30,7 @@ import geometry_msgs.Twist;
 import io.reactivex.Observer;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import sensor_msgs.Imu;
 import std_msgs.Header;
 import std_msgs.String;
@@ -93,17 +95,22 @@ public class PocketBotNode implements NodeMain {
 
     private void initWaypointPublisher(final ConnectedNode connectedNode) {
         final Publisher<NavSatFix> waypointPublisher = connectedNode.newPublisher("/" + NODE_PREFIX + "/waypoint", NavSatFix._TYPE);
-        final NavSatFix fix = waypointPublisher.newMessage();
-        Robot.get().getWaypointSubject().subscribe(new Observer<LatLng>() {
+
+        Robot.get().getWaypointSubject()
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Observer<Waypoint>() {
             @Override
             public void onSubscribe(@NonNull Disposable d) {
 
             }
 
             @Override
-            public void onNext(@NonNull LatLng latLng) {
-                fix.setLatitude(latLng.latitude);
-                fix.setLongitude(latLng.longitude);
+            public void onNext(@NonNull Waypoint waypoint) {
+                final NavSatFix fix = waypointPublisher.newMessage();
+                fix.getHeader().setSeq(waypoint.sequence);
+                fix.getHeader().setStamp(Time.fromMillis(SystemClock.uptimeMillis()));
+                fix.setLatitude(waypoint.position.latitude);
+                fix.setLongitude(waypoint.position.longitude);
                 waypointPublisher.publish(fix);
             }
 
