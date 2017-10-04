@@ -13,9 +13,9 @@ import com.tesseractmobile.pocketbot.robot.CommandContract;
 import com.tesseractmobile.pocketbot.robot.Emotion;
 import com.tesseractmobile.pocketbot.robot.Robot;
 
-import ai.api.AIConfiguration;
-import ai.api.AIDataService;
 import ai.api.AIServiceException;
+import ai.api.android.AIConfiguration;
+import ai.api.android.AIDataService;
 import ai.api.model.AIRequest;
 import ai.api.model.AIResponse;
 import ai.api.model.Result;
@@ -35,8 +35,10 @@ public class AiFragmentActivity extends BaseFaceFragmentActivity implements AI {
         Fabric.with(this, new Crashlytics());
         final String token = PocketBotSettings.getApiAiToken(this);
         //final String key = PocketBotSettings.getApiAiKey(this);
-        final AIConfiguration aiConfig = new AIConfiguration(token);
-        mAiDataService = new AIDataService(aiConfig, null);
+        final AIConfiguration aiConfig = new AIConfiguration(token,
+                AIConfiguration.SupportedLanguages.English,
+                AIConfiguration.RecognitionEngine.System);
+        mAiDataService = new AIDataService(this, aiConfig);
         Robot.get().setAI(this);
         setSensorDelay(120);
     }

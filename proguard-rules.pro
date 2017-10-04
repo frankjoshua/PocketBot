@@ -86,6 +86,12 @@ public *;
 #quickblox videochat-webrtc module
 -keep class org.webrtc.** { *; }
 
+#API.AI
+-dontwarn org.apache.logging.log4j.**
+-keep class org.apache.logging.log4j.simple.**
+
+-keep class ai.api.model.** { *; }
+
 ##---------------End: proguard configuration for quickblox  ----------
 #Catch all - remove when debugging
 -dontwarn **
