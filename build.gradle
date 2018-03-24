@@ -218,9 +218,7 @@ dependencies {
     compile 'com.android.support:multidex:1.0.1'
     compile 'com.google.code.gson:gson:2.3.1'
     //AI
-    compile ('ai.api:libai:1.4.8') {
-        exclude module: 'log4j-core'
-    }
+    compile ('ai.api:libai:1.6.12')
     compile 'ai.api:sdk:2.0.7@aar'
     // api.ai SDK dependencies
     //TODO: Disabled until http://stackoverflow.com/questions/39195771/zipexception-duplicate-entry-during-android-build
