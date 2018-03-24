@@ -109,14 +109,13 @@ android {
         }
     }
 
-    //Rename release apk with version name
+    //Rename release apk with version name - don't rename debug version, the ci server is counting on the format of the file name
     applicationVariants.all { variant ->
-        if(variant.buildType.name == "release")
-            variant.outputs.each { output ->
-                output.outputFile = new File(
-                        "release_apk",
-                        output.outputFile.name.replace(".apk", "-${variant.versionName}.apk"))
+        if(variant.buildType.name == "release") {
+            variant.outputs.all { output ->
+                outputFileName = "../../" + output.outputFile.name.replace(".apk", "-${variant.versionName}.apk")
             }
+        }
     }
 
     buildTypes {
