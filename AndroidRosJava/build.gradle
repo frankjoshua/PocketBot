@@ -16,21 +16,11 @@
 
 
 apply plugin: "ros-android"
-
-dependencies {
-  compile 'org.ros.rosjava_core:rosjava_geometry:[0.3,0.4)'
-  compile "com.android.support:support-v4:${supportLibVersion}"
-  compile "com.android.support:appcompat-v7:${supportLibVersion}"
-  compile 'org.ros.rosjava_messages:visualization_msgs:[1.12,1.13)'
-  compile "org.ros.rosjava_messages:diagnostic_msgs:[1.12,1.13)"
-  compile "org.ros.rosjava_messages:sensor_msgs:[1.12,1.13)"
-}
-
 apply plugin: 'com.android.library'
 
 android {
-  compileSdkVersion 24
-  buildToolsVersion "23.0.3"
+  compileSdkVersion 27
+  buildToolsVersion "${buildToolsVersion}"
 
   defaultConfig {
     minSdkVersion 15
@@ -44,4 +34,14 @@ android {
         exclude "META-INF/LICENSE.txt"
         exclude "META-INF/NOTICE.txt"
     }
+}
+
+dependencies {
+  compile 'org.ros.rosjava_core:rosjava_geometry:[0.3,0.4)'
+  compile "com.android.support:support-v4:${supportLibVersion}"
+  compile "com.android.support:appcompat-v7:${supportLibVersion}"
+  implementation "com.android.support:support-compat:${supportLibVersion}"
+  compile 'org.ros.rosjava_messages:visualization_msgs:[1.12,1.13)'
+  compile "org.ros.rosjava_messages:diagnostic_msgs:[1.12,1.13)"
+  compile "org.ros.rosjava_messages:sensor_msgs:[1.12,1.13)"
 }

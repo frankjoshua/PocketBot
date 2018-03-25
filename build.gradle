@@ -19,21 +19,17 @@ buildscript {
             url "https://plugins.gradle.org/m2/"
         }
         mavenCentral()
+        google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.3'
+        classpath 'com.android.tools.build:gradle:3.0.1'
         classpath 'io.fabric.tools:gradle:1.+'
         classpath 'com.google.gms:google-services:3.0.0'
         //ROS plugins
         classpath "org.ros.rosjava_bootstrap:gradle_plugins:[0.3,0.4)"
         //Changelog generator
         classpath "gradle.plugin.se.bjurr.gitchangelog:git-changelog-gradle-plugin:1.38"
-        classpath 'me.tatarka:gradle-retrolambda:3.2.4'
     }
-}
-
-plugins {
-    id "me.tatarka.retrolambda" version "3.7.0"
 }
 
 allprojects {
@@ -67,18 +63,26 @@ repositories {
         url "https://github.com/rosjava/rosjava_mvn_repo/raw/master"
     }
     mavenCentral()
+    google()
+}
+
+ext {
+    playServicesVersion = '11.0.1'
+    supportLibVersion = '27.1.0'
+    buildToolsVersion = '27.0.3'
+    qbSdkVersion = '3.3.0'
 }
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    compileSdkVersion 27
+    buildToolsVersion "${buildToolsVersion}"
 
     defaultConfig {
         applicationId "com.tesseractmobile.pocketbot"
         //Min sdk 14 required by Quickblox
         //Sdk 16 required by Houndify
         minSdkVersion 16
-        targetSdkVersion 25
+        targetSdkVersion 27
         versionCode calculateVersionCode()
         versionName calculateVersionName()
 
@@ -172,15 +176,10 @@ android {
     }
 }
 
-ext {
-    playServicesVersion = '11.0.1'
-    supportLibVersion = '25.3.1'
-    qbSdkVersion = '3.3.0'
-}
-
 dependencies {
     compile "com.android.support:support-v4:${supportLibVersion}"
     compile "com.android.support:appcompat-v7:${supportLibVersion}"
+    compile "com.android.support:support-compat:${supportLibVersion}"
     //Used for navigation drawer
     compile "com.android.support:design:${supportLibVersion}"
     compile 'com.appeaser.sublimenavigationviewlibrary:sublimenavigationviewlibrary:0.0.1'
@@ -214,7 +213,7 @@ dependencies {
         transitive = true
     }
     compile "com.quickblox:quickblox-android-sdk-videochat-webrtc:${qbSdkVersion}"
-    compile 'com.android.support:multidex:1.0.1'
+    compile 'com.android.support:multidex:1.0.3'
     compile 'com.google.code.gson:gson:2.3.1'
     //AI
     compile ('ai.api:libai:1.6.12')

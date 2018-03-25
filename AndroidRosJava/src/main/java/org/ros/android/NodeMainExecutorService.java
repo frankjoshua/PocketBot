@@ -16,14 +16,9 @@
 
 package org.ros.android;
 
-import com.google.common.base.Preconditions;
-
-import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.WifiLock;
@@ -33,10 +28,11 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
-import android.support.v7.app.NotificationCompat;
 import android.util.Log;
-import android.view.WindowManager;
 import android.widget.Toast;
+
+import com.google.common.base.Preconditions;
+
 import org.ros.RosCore;
 import org.ros.android.android_15.R;
 import org.ros.concurrent.ListenerGroup;
@@ -205,23 +201,23 @@ public class NodeMainExecutorService extends Service implements NodeMainExecutor
     if (intent.getAction() == null) {
       return START_NOT_STICKY;
     }
-    if (intent.getAction().equals(ACTION_START)) {
-      Preconditions.checkArgument(intent.hasExtra(EXTRA_NOTIFICATION_TICKER));
-      Preconditions.checkArgument(intent.hasExtra(EXTRA_NOTIFICATION_TITLE));
-      NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-      Intent notificationIntent = new Intent(this, NodeMainExecutorService.class);
-      notificationIntent.setAction(NodeMainExecutorService.ACTION_SHUTDOWN);
-      PendingIntent pendingIntent = PendingIntent.getService(this, 0, notificationIntent, 0);
-      Notification notification = builder.setContentIntent(pendingIntent)
-              .setSmallIcon(R.drawable.icon)
-              .setTicker(intent.getStringExtra(EXTRA_NOTIFICATION_TICKER))
-              .setWhen(System.currentTimeMillis())
-              .setContentTitle(intent.getStringExtra(EXTRA_NOTIFICATION_TITLE))
-              .setAutoCancel(true)
-              .setContentText("Tap to shutdown.")
-              .build();
-      startForeground(ONGOING_NOTIFICATION, notification);
-    }
+//    if (intent.getAction().equals(ACTION_START)) {
+//      Preconditions.checkArgument(intent.hasExtra(EXTRA_NOTIFICATION_TICKER));
+//      Preconditions.checkArgument(intent.hasExtra(EXTRA_NOTIFICATION_TITLE));
+//      NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+//      Intent notificationIntent = new Intent(this, NodeMainExecutorService.class);
+//      notificationIntent.setAction(NodeMainExecutorService.ACTION_SHUTDOWN);
+//      PendingIntent pendingIntent = PendingIntent.getService(this, 0, notificationIntent, 0);
+//      Notification notification = builder.setContentIntent(pendingIntent)
+//              .setSmallIcon(R.drawable.icon)
+//              .setTicker(intent.getStringExtra(EXTRA_NOTIFICATION_TICKER))
+//              .setWhen(System.currentTimeMillis())
+//              .setContentTitle(intent.getStringExtra(EXTRA_NOTIFICATION_TITLE))
+//              .setAutoCancel(true)
+//              .setContentText("Tap to shutdown.")
+//              .build();
+//      startForeground(ONGOING_NOTIFICATION, notification);
+//    }
     if (intent.getAction().equals(ACTION_SHUTDOWN)) {
       shutdown();
     }
