@@ -117,7 +117,7 @@ android {
     applicationVariants.all { variant ->
         if(variant.buildType.name == "release") {
             variant.outputs.all { output ->
-                outputFileName = "../../" + output.outputFile.name.replace(".apk", "-${variant.versionName}.apk")
+                outputFileName = "../" + output.outputFile.name.replace(".apk", "-${variant.versionName}.apk")
             }
         }
     }
