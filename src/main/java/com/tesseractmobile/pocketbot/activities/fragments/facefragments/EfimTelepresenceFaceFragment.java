@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.quickblox.users.model.QBUser;
+import com.quickblox.videochat.webrtc.BaseSession;
 import com.quickblox.videochat.webrtc.QBRTCSession;
 import com.quickblox.videochat.webrtc.view.QBRTCVideoTrack;
 import com.tesseractmobile.pocketbot.R;
@@ -106,15 +107,23 @@ public class EfimTelepresenceFaceFragment extends QuickBloxFragment{
         }
     }
 
-
-    @Override
-    public void onRemoteVideoTrackReceive(QBRTCSession qbrtcSession, QBRTCVideoTrack qbrtcVideoTrack, Integer integer) {
-
-    }
-
     @Override
     void onQBSetup(QBUser user) {
     }
 
 
+    @Override
+    public void onLocalVideoTrackReceive(BaseSession baseSession, QBRTCVideoTrack qbrtcVideoTrack) {
+
+    }
+
+    @Override
+    public void onRemoteVideoTrackReceive(BaseSession baseSession, QBRTCVideoTrack qbrtcVideoTrack, Integer integer) {
+
+    }
+
+    @Override
+    public void onStateChanged(QBRTCSession qbrtcSession, BaseSession.QBRTCSessionState qbrtcSessionState) {
+
+    }
 }

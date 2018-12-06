@@ -258,11 +258,6 @@ abstract public class QuickBloxFragment extends FaceFragment implements QBRTCCli
     }
 
     @Override
-    public void onLocalVideoTrackReceive(QBRTCSession qbrtcSession, QBRTCVideoTrack qbrtcVideoTrack) {
-
-    }
-
-    @Override
     public void onCallAcceptByUser(QBRTCSession qbrtcSession, Integer integer, Map<String, String> map) {
         //showDialog("Call Accepted");
     }
@@ -305,11 +300,6 @@ abstract public class QuickBloxFragment extends FaceFragment implements QBRTCCli
     @Override
     public void onConnectionFailedWithUser(QBRTCSession qbrtcSession, Integer integer) {
 
-    }
-
-    @Override
-    public void onError(QBRTCSession qbrtcSession, QBRTCException e) {
-        showDialog(e.toString());
     }
 
     @Override

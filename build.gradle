@@ -70,7 +70,7 @@ ext {
     playServicesVersion = '11.0.1'
     supportLibVersion = '27.1.0'
     buildToolsVersion = '27.0.3'
-    qbSdkVersion = '3.3.0'
+    qbSdkVersion = '3.6.0' //3.3.0 last
 }
 
 android {

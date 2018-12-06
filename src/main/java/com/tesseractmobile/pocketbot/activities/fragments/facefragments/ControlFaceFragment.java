@@ -11,6 +11,7 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.quickblox.users.model.QBUser;
+import com.quickblox.videochat.webrtc.BaseSession;
 import com.quickblox.videochat.webrtc.QBRTCClient;
 import com.quickblox.videochat.webrtc.QBRTCSession;
 import com.quickblox.videochat.webrtc.QBRTCTypes;
@@ -185,19 +186,6 @@ public class ControlFaceFragment extends QuickBloxFragment implements View.OnCli
     }
 
     @Override
-    public void onRemoteVideoTrackReceive(final QBRTCSession qbrtcSession, final QBRTCVideoTrack qbrtcVideoTrack, final Integer integer) {
-        mHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                //Setup Remote video
-                TelepresenceFaceFragment.fillVideoView(mRemoteVideoView, qbrtcVideoTrack, true);
-                mRemoteVideoView.setVisibility(View.VISIBLE);
-                mVisualizationView.setVisibility(View.GONE);
-            }
-        });;
-    }
-
-    @Override
     void onQBSetup(QBUser user) {
         //Do Nothing
     }
@@ -236,6 +224,29 @@ public class ControlFaceFragment extends QuickBloxFragment implements View.OnCli
             }
         }
         connectToRemoteRobot(robotinfo.prefs.qb_id, robotinfo.prefs.r_id);
+    }
+
+    @Override
+    public void onLocalVideoTrackReceive(BaseSession baseSession, QBRTCVideoTrack qbrtcVideoTrack) {
+
+    }
+
+    @Override
+    public void onRemoteVideoTrackReceive(BaseSession baseSession, QBRTCVideoTrack qbrtcVideoTrack, Integer integer) {
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                //Setup Remote video
+                TelepresenceFaceFragment.fillVideoView(mRemoteVideoView, qbrtcVideoTrack, true);
+                mRemoteVideoView.setVisibility(View.VISIBLE);
+                mVisualizationView.setVisibility(View.GONE);
+            }
+        });
+    }
+
+    @Override
+    public void onStateChanged(QBRTCSession qbrtcSession, BaseSession.QBRTCSessionState qbrtcSessionState) {
+
     }
 
     private enum RemoteState {

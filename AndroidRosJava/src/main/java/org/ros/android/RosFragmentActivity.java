@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.SyncStateContract;
@@ -129,7 +130,11 @@ abstract public class RosFragmentActivity extends FragmentActivity {
         intent.setAction(NodeMainExecutorService.ACTION_START);
         intent.putExtra(NodeMainExecutorService.EXTRA_NOTIFICATION_TICKER, notificationTicker);
         intent.putExtra(NodeMainExecutorService.EXTRA_NOTIFICATION_TITLE, notificationTitle);
-        startService(intent);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(intent);
+        } else {
+            startService(intent);
+        }
         Preconditions.checkState(
                 bindService(intent, nodeMainExecutorServiceConnection, BIND_AUTO_CREATE),
                 "Failed to bind NodeMainExecutorService.");

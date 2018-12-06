@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.quickblox.users.model.QBUser;
+import com.quickblox.videochat.webrtc.BaseSession;
 import com.quickblox.videochat.webrtc.QBRTCSession;
 import com.quickblox.videochat.webrtc.view.QBRTCVideoTrack;
 import com.quickblox.videochat.webrtc.view.RTCGLVideoView;
@@ -128,19 +129,6 @@ public class TelepresenceFaceFragment extends QuickBloxFragment{
         });
     }
 
-    @Override
-    public void onRemoteVideoTrackReceive(final QBRTCSession qbrtcSession, final QBRTCVideoTrack qbrtcVideoTrack, final Integer integer) {
-
-        mHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                //Setup Remote video
-                fillVideoView(mRemoteVideoView, qbrtcVideoTrack, true);
-                mRemoteVideoView.setVisibility(View.VISIBLE);
-            }
-        });
-
-    }
 
     static public void fillVideoView(RTCGLVideoView videoView, QBRTCVideoTrack videoTrack, boolean remoteRenderer) {
         videoTrack.addRenderer(new VideoRenderer(remoteRenderer ?
@@ -158,4 +146,25 @@ public class TelepresenceFaceFragment extends QuickBloxFragment{
         });
     }
 
+    @Override
+    public void onLocalVideoTrackReceive(BaseSession baseSession, QBRTCVideoTrack qbrtcVideoTrack) {
+
+    }
+
+    @Override
+    public void onRemoteVideoTrackReceive(BaseSession baseSession, QBRTCVideoTrack qbrtcVideoTrack, Integer integer) {
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                //Setup Remote video
+                fillVideoView(mRemoteVideoView, qbrtcVideoTrack, true);
+                mRemoteVideoView.setVisibility(View.VISIBLE);
+            }
+        });
+    }
+
+    @Override
+    public void onStateChanged(QBRTCSession qbrtcSession, BaseSession.QBRTCSessionState qbrtcSessionState) {
+
+    }
 }

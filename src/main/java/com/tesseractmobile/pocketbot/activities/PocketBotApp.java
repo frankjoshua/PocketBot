@@ -44,7 +44,7 @@ public class PocketBotApp extends Application{
 
         setup();
 
-        if (BuildConfig.DEBUG) {
+        if (false && BuildConfig.DEBUG) {
             StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
                     .detectDiskReads()
                     .detectDiskWrites()
