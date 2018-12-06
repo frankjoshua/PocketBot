@@ -105,17 +105,25 @@ public class NodeMainExecutorService extends Service implements NodeMainExecutor
 
   @Override
   public void onCreate() {
-    Intent notificationIntent = new Intent(this, LauncherActivity.class);
+    Intent notificationIntent = new Intent(this, NodeMainExecutorService.class);
+    notificationIntent.setAction(ACTION_SHUTDOWN);
 
-    PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
-            notificationIntent, 0);
+    PendingIntent closeAppIntent = PendingIntent.getService(this, 0,
+            notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+
+    PendingIntent configureRosIntent = PendingIntent.getActivity(
+            this,
+            0,
+            new Intent(this, MasterChooser.class),
+            0);
+
 
 
     String NOTIFICATION_CHANNEL_ID = "com.tesseractmobile.pocketbot";
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+    if (Build.VERSION.SDK_INT >= 26) {
 
       String channelName = "My Background Service";
-      NotificationChannel chan = new NotificationChannel(NOTIFICATION_CHANNEL_ID, channelName, NotificationManager.IMPORTANCE_NONE);
+      NotificationChannel chan = new NotificationChannel(NOTIFICATION_CHANNEL_ID, channelName, NotificationManager.IMPORTANCE_MIN);
       chan.setLightColor(Color.BLUE);
       chan.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
       NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -126,7 +134,11 @@ public class NodeMainExecutorService extends Service implements NodeMainExecutor
             .setSmallIcon(R.drawable.icon)
             .setContentTitle("PocketBot ROS Service")
             .setContentText("Keeping ROS connected...")
-            .setContentIntent(pendingIntent).build();
+            .setContentIntent(configureRosIntent)
+            .setAutoCancel(true)
+            .setOngoing(false)
+            .addAction(R.drawable.error, "Exit", closeAppIntent)
+            .build();
     startForeground(1, notification);
     handler = new Handler();
     PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);

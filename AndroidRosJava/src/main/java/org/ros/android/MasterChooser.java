@@ -19,6 +19,7 @@ package org.ros.android;
 import com.google.common.base.Preconditions;
 
 import android.app.Activity;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -164,6 +165,7 @@ public class MasterChooser extends Activity {
         getPreferences(MODE_PRIVATE).getString(PREFS_KEY_NAME,
             NodeConfiguration.DEFAULT_MASTER_URI.toString());
     uriText.setText(uri);
+
   }
 
   @Override
