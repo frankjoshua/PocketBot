@@ -16,18 +16,25 @@
 
 package org.ros.android;
 
+import android.app.LauncherActivity;
 import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.WifiLock;
 import android.os.AsyncTask;
 import android.os.Binder;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -98,6 +105,29 @@ public class NodeMainExecutorService extends Service implements NodeMainExecutor
 
   @Override
   public void onCreate() {
+    Intent notificationIntent = new Intent(this, LauncherActivity.class);
+
+    PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
+            notificationIntent, 0);
+
+
+    String NOTIFICATION_CHANNEL_ID = "com.tesseractmobile.pocketbot";
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
+      String channelName = "My Background Service";
+      NotificationChannel chan = new NotificationChannel(NOTIFICATION_CHANNEL_ID, channelName, NotificationManager.IMPORTANCE_NONE);
+      chan.setLightColor(Color.BLUE);
+      chan.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
+      NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+      assert manager != null;
+      manager.createNotificationChannel(chan);
+    }
+    Notification notification = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
+            .setSmallIcon(R.drawable.icon)
+            .setContentTitle("PocketBot ROS Service")
+            .setContentText("Keeping ROS connected...")
+            .setContentIntent(pendingIntent).build();
+    startForeground(1, notification);
     handler = new Handler();
     PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
     wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG);
