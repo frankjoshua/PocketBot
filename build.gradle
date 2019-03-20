@@ -22,11 +22,11 @@ buildscript {
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.1'
+        classpath 'com.android.tools.build:gradle:3.1.2'
         classpath 'io.fabric.tools:gradle:1.+'
         classpath 'com.google.gms:google-services:3.0.0'
         //ROS plugins
-        classpath "org.ros.rosjava_bootstrap:gradle_plugins:[0.3,0.4)"
+        classpath "org.ros.rosjava_bootstrap:gradle_plugins:0.3.3"
         //Changelog generator
         classpath "gradle.plugin.se.bjurr.gitchangelog:git-changelog-gradle-plugin:1.38"
     }
@@ -68,13 +68,13 @@ repositories {
 
 ext {
     playServicesVersion = '11.0.1'
-    supportLibVersion = '27.1.0'
-    buildToolsVersion = '27.0.3'
+    supportLibVersion = '28.0.0'
+    buildToolsVersion = '28.0.3'
     qbSdkVersion = '3.6.0' //3.3.0 last
 }
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion 28
     buildToolsVersion "${buildToolsVersion}"
 
     defaultConfig {
@@ -82,7 +82,7 @@ android {
         //Min sdk 14 required by Quickblox
         //Sdk 16 required by Houndify
         minSdkVersion 16
-        targetSdkVersion 27
+        targetSdkVersion 28
         versionCode calculateVersionCode()
         versionName calculateVersionName()
 
