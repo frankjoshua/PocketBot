@@ -24,7 +24,7 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:3.1.2'
         classpath 'io.fabric.tools:gradle:1.+'
-        classpath 'com.google.gms:google-services:3.0.0'
+        classpath 'com.google.gms:google-services:4.2.0'
         //ROS plugins
         classpath "org.ros.rosjava_bootstrap:gradle_plugins:0.3.3"
         //Changelog generator
@@ -194,17 +194,17 @@ dependencies {
         transitive = true;
     }
     //Face Tracking
-    compile "com.google.android.gms:play-services-vision:${playServicesVersion}"
+    compile "com.google.android.gms:play-services-vision:17.0.2"
     //User authentication
-    compile "com.google.android.gms:play-services-auth:${playServicesVersion}"
-    compile "com.google.android.gms:play-services-plus:${playServicesVersion}"
+    compile "com.google.android.gms:play-services-auth:16.0.0"
+    compile "com.google.android.gms:play-services-plus:16.0.0"
     //App Invites
-    compile "com.google.android.gms:play-services-appinvite:${playServicesVersion}"
+    compile "com.google.android.gms:play-services-appinvite:16.1.1"
     //Nearby Connections - Local networking
-    compile "com.google.android.gms:play-services-nearby:${playServicesVersion}"
+    compile "com.google.android.gms:play-services-nearby:16.0.0"
     //Google Maps
-    compile "com.google.android.gms:play-services-maps:${playServicesVersion}"
-    compile "com.google.android.gms:play-services-location:${playServicesVersion}"
+    compile "com.google.android.gms:play-services-maps:16.1.0"
+    compile "com.google.android.gms:play-services-location:16.0.0"
     //RecyclerView
     compile "com.android.support:recyclerview-v7:${supportLibVersion}"
     //WebRTC
@@ -222,10 +222,10 @@ dependencies {
     //TODO: Disabled until http://stackoverflow.com/questions/39195771/zipexception-duplicate-entry-during-android-build
     //compile 'commons-io:commons-io:2.4'
     //Firebase - cloud data storage
-    compile "com.google.firebase:firebase-core:${playServicesVersion}"
-    compile "com.google.firebase:firebase-database:${playServicesVersion}"
-    compile "com.google.firebase:firebase-auth:${playServicesVersion}"
-    compile "com.google.firebase:firebase-storage:${playServicesVersion}"
+    compile "com.google.firebase:firebase-core:16.0.8"
+    compile "com.google.firebase:firebase-database:16.1.0"
+    compile "com.google.firebase:firebase-auth:16.2.0"
+    compile "com.google.firebase:firebase-storage:16.1.0"
     //Bluetooth beacon detection
     compile 'org.altbeacon:android-beacon-library:2.9.1'
     //Houndify - Voice recognition and backup AI
@@ -267,3 +267,4 @@ task gitChangelogTask(type: se.bjurr.gitchangelog.plugin.gradle.GitChangelogTask
 
 
 apply plugin: 'com.google.gms.google-services'
+com.google.gms.googleservices.GoogleServicesPlugin.config.disableVersionCheck = true

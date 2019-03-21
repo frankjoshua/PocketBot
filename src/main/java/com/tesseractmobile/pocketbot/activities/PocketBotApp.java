@@ -13,6 +13,7 @@ import android.support.multidex.MultiDex;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
+import com.google.firebase.FirebaseApp;
 import com.quickblox.auth.session.QBSettings;
 import com.tesseractmobile.pocketbot.BuildConfig;
 import com.tesseractmobile.pocketbot.robot.DataStore;
