@@ -10,7 +10,7 @@ stage('Stage Build'){
         deleteDir()
         git credentialsId: credentialsId, url: gitUrl, branch: branch
         sh "chmod +x ./gradlew"
-        sh "./gradlew clean assembleDebug"
+        sh "export ANDROID_HOME=/opt/android-sdk && ./gradlew clean assembleDebug"
     }
 }
 
@@ -18,17 +18,17 @@ stage('Stage Build'){
 stage('Stage Unit Test'){
     node('android') {
         git credentialsId: credentialsId, url: gitUrl, branch: branch
-        sh "./gradlew test"
+        sh "export ANDROID_HOME=/opt/android-sdk && ./gradlew test"
     }
 }
 
 stage('Stage Connected Test') {
     node('android') {
         git credentialsId: credentialsId, url: gitUrl, branch: branch
-        sh "./gradlew uninstallAll"
-        sh "./gradlew installDebug"
-        sh "./gradlew grantPermissions"
-        sh "./gradlew connectedDebugAndroidTest"
+        sh "export ANDROID_HOME=/opt/android-sdk && ./gradlew uninstallAll"
+        sh "export ANDROID_HOME=/opt/android-sdk && ./gradlew installDebug"
+        sh "export ANDROID_HOME=/opt/android-sdk && ./gradlew grantPermissions"
+        sh "export ANDROID_HOME=/opt/android-sdk && ./gradlew connectedDebugAndroidTest"
     }
 }
 
@@ -38,7 +38,7 @@ stage('Stage Beta Release'){
         git credentialsId: credentialsId, url: gitUrl, branch: branch
         sshagent([credentialsId]) {
             //Update build number
-            sh "./gradlew incrementVersion"
+            sh "export ANDROID_HOME=/opt/android-sdk && ./gradlew incrementVersion"
             sh "git config --global user.email \"jenkins@tesseractmobile.com\""
             sh "git config --global user.name \"Jenkins\""
             sh "git commit -a -m\"Updated version number from Jenkins build $buildNumber\""
@@ -50,9 +50,9 @@ stage('Stage Beta Release'){
             sh "git merge origin/master"
             sh "git push origin beta"
             //Save Change Log
-            sh "./gradlew gitChangelogTask"
+            sh "export ANDROID_HOME=/opt/android-sdk && ./gradlew gitChangelogTask"
             //Upload to Crashlytics beta
-            sh "./gradlew assembleDebug crashlyticsUploadDistributionDebug"
+            sh "export ANDROID_HOME=/opt/android-sdk && ./gradlew assembleDebug crashlyticsUploadDistributionDebug"
         }
     }
 }
