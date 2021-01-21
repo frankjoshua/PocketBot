@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/AndroidRosJava/AndroidRosJava.iml" filepath="$PROJECT_DIR$/AndroidRosJava/AndroidRosJava.iml" />
-      <module fileurl="file://$PROJECT_DIR$/pocketbot.iml" filepath="$PROJECT_DIR$/pocketbot.iml" />
-      <module fileurl="file://$PROJECT_DIR$/usbSerialForAndroid/usbSerialForAndroid.iml" filepath="$PROJECT_DIR$/usbSerialForAndroid/usbSerialForAndroid.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/pocketbot.iml" filepath="$PROJECT_DIR$/.idea/modules/pocketbot.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/AndroidRosJava/pocketbot.AndroidRosJava.iml" filepath="$PROJECT_DIR$/.idea/modules/AndroidRosJava/pocketbot.AndroidRosJava.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/usbSerialForAndroid/pocketbot.usbSerialForAndroid.iml" filepath="$PROJECT_DIR$/.idea/modules/usbSerialForAndroid/pocketbot.usbSerialForAndroid.iml" />
     </modules>
   </component>
 </project>
