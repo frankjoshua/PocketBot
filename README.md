@@ -1,7 +1,7 @@
 # Pocket Bot
 ## Personality for your robot!
 
-[![](https://github.com/steverichey/google-play-badge-svg/blob/master/img/en_get.svg =100x)](https://play.google.com/store/apps/details?id=com.tesseractmobile.pocketbot)
+[![](https://github.com/steverichey/google-play-badge-svg/blob/master/img/en_get.svg width=100)](https://play.google.com/store/apps/details?id=com.tesseractmobile.pocketbot)
 
 ### Setup
 
