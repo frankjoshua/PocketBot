@@ -6,7 +6,7 @@ An Android app to control a ROS based robot (or Arduino).
 ## Setup
 
 To run this you need to setup a free account on Firebase.
-Download your google-services.json and place it in the root directory of the project.
+Download your google-services.json and place it in the root directory of the project. You will also need a Google maps api key. Place it in a file named google_maps_api_key.txt.
 A pre compiled version is available on the [Google Play Store](https://play.google.com/store/apps/details?id=com.tesseractmobile.pocketbot)
 
 ## License
