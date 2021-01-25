@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/tvInfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:text="Enter the URL of the ROS master. Addresses that end in .local will not work on Android. Use the IP address instead."
+        android:textSize="24dp"
+        android:padding="20dp"/>
+
+    <TextView
+        android:id="@+id/tvMasterUri"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvInfo"
+        android:padding="20dp"
+        android:textSize="20dp"
+        android:text="http://10.10.10.1:11311"/>
+
+    <android.support.design.widget.TextInputEditText
+        android:id="@+id/edMasterUri"
+        android:layout_width="220dp"
+        android:layout_height="wrap_content"
+        android:inputType="number|numberDecimal"
+        android:digits="0123456789."
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="20dp"
+        android:layout_below="@+id/tvMasterUri"
+        android:hint="192.168.1.1">
+        <requestFocus/>
+    </android.support.design.widget.TextInputEditText>
+
+
+    <Button
+        android:id="@+id/btnOk"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/tvMasterUri"
+        android:layout_marginRight="20dp"
+        android:text="OK"/>
+
+</RelativeLayout>

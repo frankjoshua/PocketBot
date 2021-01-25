@@ -1,0 +1,19 @@
+So, what is PocketBot?  Well, robots come in all shapes and sizes.  Some do a little and some do a lot.  Some take just hours to build, and some take years.  But all of them require a “User Interface”.
+
+PocketBot lets you use an Android device as your robot’s User Interface.  What’s that mean?  It means you can:
+
+
+– Give vocal commands to your robot.
+– Control your robot with a joystick on your Android phone.
+– Use your robot as a telepresence device and control it with the video feed.
+– Take advantage of your Android device’s gyroscope and GPS to give even more abilities to your robot.
+On top of that, PocketBot is a fun, engaging UI with great features!
+– Connect to ROS (Robotic Operating Ssytem) master
+– Stream sensor data to ROS
+
+– Uses social cues to engage in realistic interactions with the user.
+– Bright, colorful faces and emotions.
+– High-level communication skills and customizable dialogue.
+
+
+Download the Arduino library from https://github.com/frankjoshua/PocketBot
