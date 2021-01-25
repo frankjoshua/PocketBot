@@ -1,2 +1,0 @@
-include ':usbSerialForAndroid'
-include ':AndroidRosJava'

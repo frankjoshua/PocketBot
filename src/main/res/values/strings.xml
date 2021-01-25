@@ -1,8 +1,0 @@
-<resources>
-    <string name="app_name">PocketBot</string>
-    <string name="service_id">com.tesseractmobile.pocketbot.service</string>
-    <string name="privacy">Privacy Policy</string>
-    <string name="privacy_url">http://www.tesseractmobile.com/legal/pocketbot-privacy-policy/</string>
-    <string name="permission_camera_rationale">Need the camera for Face Tracking</string>
-    <string name="ok">OK</string>
-</resources>
